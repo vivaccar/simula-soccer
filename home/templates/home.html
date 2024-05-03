@@ -22,28 +22,30 @@
 			<th>Time</th>
 			<th>Pontos</th>
 			<th>Vitorias</th>
+			<th>Empates</th>
+			<th>Derrotas</th>
 			<th>Gols</th>
 			<th>Gols sofridos</th>
-			<th>Saldo de gols</th>
 		</thead>
-		<h1>
-		</h1>
 		<tbody>
-			<ul>
-				{% for team in teams_list %}
-				<li>
-					Nome: {{ team.name }}<br>
-					Pontos: {{ team.points }}<br>
-					Gols Pró: {{ team.goals_pro }}<br>
-					Gols Contra: {{ team.goals_contra }}<br>
-					Vitórias: {{ team.wins }}<br>
-					Empates: {{ team.draws }}<br>
-					Derrotas: {{ team.loss }}<br>
-				</li>
-				{% endfor %}
-			</ul>
+			{% for team in teams_list %}
+			<tr>
+				<td>{{ forloop.counter }}</td> 
+				<td>{{ team.name }}</td>
+				<td>{{ team.points }}</td>
+				<td>{{ team.wins }}</td>
+				<td>{{ team.draws }}</td>
+				<td>{{ team.loss }}</td>
+				<td>{{ team.goals_pro }}</td>
+				<td>{{ team.goals_con }}</td>
+			</tr>
+			{% endfor %}
 		</tbody>
 	</table>
 	<div>
+		<form>
+			
+		</form>
+	</div>
 </body>
 </html>
