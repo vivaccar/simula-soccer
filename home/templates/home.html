@@ -29,15 +29,19 @@
 		<h1>
 		</h1>
 		<tbody>
-			<tr>
-				<td>Gremio</td>
-				<td>0</td>
-				<td>0</td>
-				<td>0</td>
-				<td>0</td>
-				<td>0</td>
-				<td>0</td>
-			</tr>
+			<ul>
+				{% for team in teams_list %}
+				<li>
+					Nome: {{ team.name }}<br>
+					Pontos: {{ team.points }}<br>
+					Gols Pró: {{ team.goals_pro }}<br>
+					Gols Contra: {{ team.goals_contra }}<br>
+					Vitórias: {{ team.wins }}<br>
+					Empates: {{ team.draws }}<br>
+					Derrotas: {{ team.loss }}<br>
+				</li>
+				{% endfor %}
+			</ul>
 		</tbody>
 	</table>
 	<div>
