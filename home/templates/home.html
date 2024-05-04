@@ -49,16 +49,15 @@
 		<form method="post" action="{% url 'game' %}">
 			{% for game in games_list %}
 			{% csrf_token %}
-           	<input type="hidden" name="home_team" value={{game.home_team.name}}>
+			<input type="hidden" name="home_team" value={{game.home_team.name}}>
             <input type="hidden" name="away_team" value={{game.away_team.name}}>
             <label for="home_goals">{{game.home_team.name}}</label>
             <input type="number" name="home_goals" id="home_goals" min="0" max="9">
             x
 			<input type="number" name="away_goals" id="away_goals" min="0" max="9">
             <label for="away_goals">{{game.away_team.name}}</label>
-			<br>
-			{% endfor %}
 			<input type="submit" value="Enviar">
+			{% endfor %}
         </form>
     </div>
 </body>
