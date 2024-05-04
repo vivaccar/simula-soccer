@@ -14,3 +14,11 @@ class	Team(models.Model):
 	def __str__(self):
 		return self.name
 
+class	Game(models.Model):
+	home_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='home_team')
+	away_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='away_team')
+	home_goals = models.IntegerField(default = 0)
+	away_goals = models.IntegerField(default = 0)
+
+	def __str__(self):
+		return self.home_team.name + ' X ' + self.away_team.name
