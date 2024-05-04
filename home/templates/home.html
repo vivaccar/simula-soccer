@@ -42,10 +42,18 @@
 			{% endfor %}
 		</tbody>
 	</table>
-	<div>
-		<form>
-			
-		</form>
-	</div>
+    <div style="margin: 15px;">
+        <form method="post" action="{% url 'game' %}">
+			{% csrf_token %}
+           	<input type="hidden" name="home_team" value="Gremio">
+            <input type="hidden" name="away_team" value="Internacional">
+            <label for="home_goals">Gremio</label>
+            <input type="number" name="home_goals" id="home_goals" min="0" max="9">
+            x
+			<input type="number" name="away_goals" id="away_goals" min="0" max="9">
+            <label for="away_goals">Internacional</label>
+            <input type="submit" value="Enviar">
+        </form>
+    </div>
 </body>
 </html>
