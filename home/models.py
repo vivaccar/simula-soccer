@@ -22,6 +22,7 @@ class	Game(models.Model):
 	away_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='away_team')
 	home_goals = models.IntegerField(default = 0)
 	away_goals = models.IntegerField(default = 0)
+	played = models.BooleanField(default=False)
 
 	def __str__(self):
 		return self.home_team.name + ' X ' + self.away_team.name
