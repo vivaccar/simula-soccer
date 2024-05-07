@@ -62,5 +62,9 @@
         </form>
         {% endfor %}
 	</div>
+	<form method="post" action="{% url 'restart' %}">
+	{% csrf_token %}
+	<input type="submit" value="Restart">
+	</form>
 </body>
 </html>
