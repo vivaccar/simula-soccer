@@ -20,8 +20,8 @@ class	Team(models.Model):
 class	Game(models.Model):
 	home_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='home_team')
 	away_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='away_team')
-	home_goals = models.IntegerField(default = 0)
-	away_goals = models.IntegerField(default = 0)
+	home_goals = models.IntegerField(default = None, null=True, blank=True)
+	away_goals = models.IntegerField(default = None, null=True, blank=True)
 	played = models.BooleanField(default=False)
 
 	def __str__(self):

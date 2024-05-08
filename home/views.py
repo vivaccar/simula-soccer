@@ -33,7 +33,6 @@ def reset_result(game, home_team, away_team):
 		away_team.wins -= 1
 		home_team.loss -= 1
 		away_team.points -= 3
-	game.save()
 	home_team.save()
 	away_team.save()
 
@@ -90,12 +89,12 @@ def	restart_teams():
 def	restart_games():
 	game_list = Game.objects.all()
 	for game in game_list:
-		game.home_goals = 0
-		game.away_goals = 0
+		game.home_goals = None
+		game.away_goals = None
 		game.played = False
 		game.save()
 
 def	restart(request):
 	restart_teams()
 	restart_games()
-	return (home(request))
+	return home(request)
