@@ -7,12 +7,10 @@ from .forms import Game_forms
 	
 # Create your views here.
 
-def	home(request):
+def	home(request, current_round):
+	games_list = Game.objects.filter(round = current_round)
 	teams_list = Team.objects.order_by('-points', '-wins', '-sg')
-	context = {'teams_list': teams_list}
-	games_list = Game.objects.all()
-	teams_list = Team.objects.order_by('-points', '-wins', '-sg')
-	context = {'teams_list': teams_list, 'games_list': games_list}
+	context = {'teams_list': teams_list, 'games_list': games_list, 'current_round' : current_round}
 	return (render(request, 'home.html', context))
 
 def reset_result(game, home_team, away_team):
@@ -48,6 +46,7 @@ def game(request):
 		home_team = Team.objects.get(name=home_team_name)
 		away_team = Team.objects.get(name=away_team_name)
 		game_class = Game.objects.get(id = game_id)
+		round = game_class.round
 		if game_class.played == True:
 			reset_result(game_class, home_team, away_team)
 		home_team.goals_pro += home_goals
@@ -75,8 +74,8 @@ def game(request):
 		game_class.save()
 		home_team.save()
 		away_team.save()
-		return home(request)
-	return home(request)
+		return home(request, round)
+	return home(request, 1)
 
 def	restart_teams():
 	teams_list = Team.objects.all()
@@ -102,4 +101,12 @@ def	restart_games():
 def	restart(request):
 	restart_teams()
 	restart_games()
-	return home(request)
+	return home(request, 1)
+
+def next_round(request):
+	round = int(request.POST.get('current_round'))
+	return home(request, round + 1)
+
+def prev_round(request):
+	round = int(request.POST.get('current_round'))
+	return home(request, round - 1)

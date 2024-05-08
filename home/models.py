@@ -21,6 +21,7 @@ class	Game(models.Model):
 	home_goals = models.IntegerField(default = None, null=True, blank=True)
 	away_goals = models.IntegerField(default = None, null=True, blank=True)
 	played = models.BooleanField(default=False)
+	round = models.IntegerField(default = 1)
 
 	def __str__(self):
 		return self.home_team.name + ' X ' + self.away_team.name
