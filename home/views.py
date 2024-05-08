@@ -8,10 +8,10 @@ from .forms import Game_forms
 # Create your views here.
 
 def	home(request):
-	teams_list = Team.objects.order_by('-points', '-wins')
+	teams_list = Team.objects.order_by('-points', '-wins', '-sg')
 	context = {'teams_list': teams_list}
 	games_list = Game.objects.all()
-	teams_list = Team.objects.order_by('-points')
+	teams_list = Team.objects.order_by('-points', '-wins', '-sg')
 	context = {'teams_list': teams_list, 'games_list': games_list}
 	return (render(request, 'home.html', context))
 
@@ -20,6 +20,8 @@ def reset_result(game, home_team, away_team):
 	home_team.goals_con -= game.away_goals
 	away_team.goals_pro -= game.away_goals
 	away_team.goals_con -= game.home_goals
+	home_team.sg -= game.home_goals - game.away_goals
+	away_team.sg -= game.away_goals - game.home_goals
 	if game.home_goals > game.away_goals:
 		home_team.wins -= 1
 		away_team.loss -= 1
@@ -54,6 +56,8 @@ def game(request):
 		game_class.away_goals = away_goals
 		away_team.goals_pro += away_goals
 		away_team.goals_con += home_goals
+		home_team.sg += home_goals - away_goals
+		away_team.sg += away_goals - home_goals
 		if home_goals > away_goals:
 			home_team.wins += 1
 			away_team.loss += 1
@@ -83,6 +87,7 @@ def	restart_teams():
 		team.wins = 0
 		team.loss = 0
 		team.draws = 0
+		team.sg = 0
 		print ('oi')
 		team.save()
 	

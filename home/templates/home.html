@@ -16,57 +16,77 @@
 			{% csrf_token %}
 		</form>
 	</div> -->
-	<div style="margin: 15px;">
-	<table class="table-bordered">
-		<thead>
-			<th>#</th>
-			<th>Time</th>
-			<th>Pontos</th>
-			<th>Vitorias</th>
-			<th>Empates</th>
-			<th>Derrotas</th>
-			<th>Gols</th>
-			<th>Gols sofridos</th>
-			<th>Saldo de Gols</th>
-		</thead>
-		<tbody>
-			{% for team in teams_list %}
-			<tr>
-				<td>{{ forloop.counter }}</td> 
-				<td>{{ team.name }}</td>
-				<td>{{ team.points }}</td>
-				<td>{{ team.wins }}</td>
-				<td>{{ team.draws }}</td>
-				<td>{{ team.loss }}</td>
-				<td>{{ team.goals_pro }}</td>
-				<td>{{ team.goals_con }}</td>
-				<td>{{ team.goals_dif }}</td>
-			</tr>
-			{% endfor %}
-		</tbody>
-	</table>
-	<br>
-	{% for game in games_list %}
-		<form method="post" action="{% url 'game' %}">
+	<div style="margin: 5px; height: 100%;">
+		<table class="table-bordered">
+			<thead>
+				<th>#</th>
+				<th>Time</th>
+				<th>Pontos</th>
+				<th>Vitorias</th>
+				<th>Empates</th>
+				<th>Derrotas</th>
+				<th>Gols</th>
+				<th>Gols sofridos</th>
+				<th>Saldo de Gols</th>
+			</thead>
+			<tbody>
+				{% for team in teams_list %}
+				<tr>
+					<td>{{ forloop.counter }}</td> 
+					<td>{{ team.name }}</td>
+					<td>{{ team.points }}</td>
+					<td>{{ team.wins }}</td>
+					<td>{{ team.draws }}</td>
+					<td>{{ team.loss }}</td>
+					<td>{{ team.goals_pro }}</td>
+					<td>{{ team.goals_con }}</td>
+					<td>{{ team.sg }}</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		{% for game in games_list %}
+		<form id="form_{{ game.id }}" method="post" action="{% url 'game' %}">
+			{% csrf_token %}
+			<div style="margin-top: 3px;">
+				<input type="hidden" name="home_team" value="{{ game.home_team.name }}">
+				<input type="hidden" name="away_team" value="{{ game.away_team.name }}">
+				<input type="hidden" name="game_id" value="{{ game.id }}">
+				{{ game.home_team.name }}
+				<input type="number" name="home_goals" id="home_goals_{{ game.id }}" min="0" max="9" value="{{ game.home_goals }}">
+				x
+				<input type="number" name="away_goals" id="away_goals_{{ game.id }}" min="0" max="9" value="{{ game.away_goals }}">
+				{{ game.away_team.name }}
+				<br>
+			</div>
+		</form>
+		<script>
+			document.addEventListener('DOMContentLoaded', function() {
+				var homeGoalsInput = document.getElementById('home_goals_{{ game.id }}');
+				var awayGoalsInput = document.getElementById('away_goals_{{ game.id }}');
+				var form = document.getElementById('form_{{ game.id }}');
+
+				homeGoalsInput.addEventListener('input', function() {
+					checkInputs();
+				});
+
+				awayGoalsInput.addEventListener('input', function() {
+					checkInputs();
+				});
+
+				function checkInputs() {
+					if (homeGoalsInput.value !== '' && awayGoalsInput.value !== '') {
+						form.submit();
+					}
+				}
+			});
+		</script>
+		{% endfor %}
+		<br>
+		<form method="post" action="{% url 'restart' %}">
 		{% csrf_token %}
-        <div style="margin-top: 3px;">
-        <input type="hidden" name="home_team" value="{{game.home_team.name}}">
-        <input type="hidden" name="away_team" value="{{game.away_team.name}}">
-        <input type="hidden" name="game_id" value="{{game.id}}">
-        {{game.home_team.name}}
-        <input type="number" name="home_goals" id="home_goals" min="0" max="9" value={{game.home_goals}}>
-        x
-        <input type="number" name="away_goals" id="away_goals" min="0" max="9" value={{game.away_goals}}>
-        {{game.away_team.name}}
-        <input type="submit" value="Enviar">
-        <br>
-		</div>
-        </form>
-    {% endfor %}
-	<br>
-	<form method="post" action="{% url 'restart' %}">
-	{% csrf_token %}
-	<input type="submit" value="Restart">
-	</form>
+		<input type="submit" value="Restart">
+		</form>
+	</div>
 </body>
 </html>

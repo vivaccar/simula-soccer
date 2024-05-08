@@ -10,9 +10,7 @@ class	Team(models.Model):
 	wins = models.IntegerField(default = 0)
 	draws = models.IntegerField(default = 0)
 	loss = models.IntegerField(default = 0)
-
-	def goals_dif(self):
-		return self.goals_pro - self.goals_con
+	sg = models.IntegerField(default=0)
 
 	def __str__(self):
 		return self.name
