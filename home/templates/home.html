@@ -102,6 +102,10 @@
 		{% csrf_token %}
 		<input type="submit" value="Restart">
 		</form>
+		<form method="post" action="{% url 'api' %}">
+			{% csrf_token %}
+			<input type="submit" value="API">
+		</form>
 	</div>
 </body>
 </html>

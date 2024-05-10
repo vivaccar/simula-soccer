@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.template import loader
 from .models import Team, Game
 from .forms import Game_forms
-
+import requests
 	
 # Create your views here.
 
@@ -110,3 +110,23 @@ def next_round(request):
 def prev_round(request):
 	round = int(request.POST.get('current_round'))
 	return home(request, round - 1)
+
+def api_football(request):
+	if (request.method == 'POST'):
+		a = int(request.POST.get('current_round'))
+		print(f'o valor de round eh: {a}')
+		round = 'Regular Season - ' + str(request.POST.get('current_round'))
+		print(f'o valor de round eh: {round}')
+		url = "https://api-football-v1.p.rapidapi.com/v3/fixtures"
+		querystring = {"league":"71", "season":"2024", "round": round}
+		headers = {
+			"X-RapidAPI-Key": "a915c948a2mshd5daae6b916daabp1b5891jsn54b9950682d1",
+			"X-RapidAPI-Host": "api-football-v1.p.rapidapi.com"
+		}
+		response = requests.get(url, headers=headers, params=querystring)
+		data = response.json()
+		for game in data['response']:
+			game = game['teams']['home']['name'] + ' X ' + game['teams']['away']['name']
+			print (game)
+		print('oi')
+	return(home(request, 1))
