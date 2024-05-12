@@ -12,6 +12,7 @@ def	home(request, current_round):
 	games_list = Game.objects.filter(round = current_round)
 	teams_list = Team.objects.order_by('-points', '-wins', '-sg')
 	context = {'teams_list': teams_list, 'games_list': games_list, 'current_round' : current_round}
+	
 	return (render(request, 'home.html', context))
 
 def reset_result(game, home_team, away_team):
@@ -117,16 +118,10 @@ def api_football(request):
 		url = "https://api-football-v1.p.rapidapi.com/v3/fixtures"
 		querystring = {"league":"71", "season":"2024"}
 		headers = {
-			"X-RapidAPI-Key": "a915c948a2mshd5daae6b916daabp1b5891jsn54b9950682d1",
+			"X-RapidAPI-Key": "1b8ffa34e2mshb6c3096387b53eep1345dcjsn899e6d7dd07c",
 			"X-RapidAPI-Host": "api-football-v1.p.rapidapi.com"
 		}
 		response = requests.get(url, headers=headers, params=querystring)
 		data = response.json()
 		get_updated_games(data)
-		print("test")
 	return(home(request, 1))
-
-""" 		a = int(request.POST.get('current_round'))
-		print(f'o valor de round eh: {a}')
-		round = 'Regular Season - ' + str(request.POST.get('current_round'))
-		print(f'o valor de round eh: {round}') """

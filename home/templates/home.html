@@ -9,103 +9,98 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 <body>
-	<div align="center">
-		<h1>SimulaSoccer</h1>
-	</div>
-<!-- 	<div style="margin: 15px;">
-		<form method="post">
-			<input>
-			{% csrf_token %}
-		</form>
-	</div> -->
-	<div align="center" style="margin: 5px; height: 100%;">
-		<table class="table-bordered">
-			<thead>
-				<th style="margin: 1px;">#</th>
-				<th>Time</th>
-				<th>Pontos</th>
-				<th>Vitorias</th>
-				<th>Empates</th>
-				<th>Derrotas</th>
-				<th>Gols</th>
-				<th>Gols sofridos</th>
-				<th>Saldo de Gols</th>
-			</thead>
-			<tbody>
-				{% for team in teams_list %}
-				<tr>
-					<td>{{ forloop.counter }}</td> 
-					<td><img src="{{ team.logo }}" alt="" width="10%" height="10%"> {{ team.name }}</td>
-					<td>{{ team.points }}</td>
-					<td>{{ team.wins }}</td>
-					<td>{{ team.draws }}</td>
-					<td>{{ team.loss }}</td>
-					<td>{{ team.goals_pro }}</td>
-					<td>{{ team.goals_con }}</td>
-					<td>{{ team.sg }}</td>
-				</tr>
-				{% endfor %}
-			</tbody>
-		</table>
+	<h1 style="text-align: center;">SimulaSoccer</h1>
+	<br>
+	<div style="overflow: hidden;">
+		<div style="width: 50%; float: left; margin-left: 5%;">
+			<table class="table-bordered">
+				<thead>
+					<th>#</th>
+					<th>Time</th>
+					<th>Pontos</th>
+					<th>Vitorias</th>
+					<th>Empates</th>
+					<th>Derrotas</th>
+					<th>Gols</th>
+					<th>Gols sofridos</th>
+					<th>Saldo de Gols</th>
+				</thead>
+				<tbody>
+					{% for team in teams_list %}
+					<tr>
+						<td>{{ forloop.counter }}</td>
+						<td><img src="{{ team.logo }}" alt="" width="10%" height="10%"> {{ team.name }}</td>
+						<td>{{ team.points }}</td>
+						<td>{{ team.wins }}</td>
+						<td>{{ team.draws }}</td>
+						<td>{{ team.loss }}</td>
+						<td>{{ team.goals_pro }}</td>
+						<td>{{ team.goals_con }}</td>
+						<td>{{ team.sg }}</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
 		</div>
-		<div align="center">
-		<h2>RODADA {{current_round}}</h2>
-		{% for game in games_list %}
-		<form id="form_{{ game.id }}" method="post" action="{% url 'game' %}">
-			{% csrf_token %}
-			<div style="margin-top: 3px;">
-				<input type="hidden" name="home_team" value="{{ game.home_team.name }}">
-				<input type="hidden" name="away_team" value="{{ game.away_team.name }}">
-				<input type="hidden" name="game_id" value="{{ game.id }}">
-				<img src="{{ game.home_team.logo }}" alt=""  height="2%" width="2%"> {{ game.home_team.name }}
-				<input type="number" name="home_goals" id="home_goals_{{ game.id }}" min="0" max="9" value="{{ game.home_goals }}">
-				x
-				<input type="number" name="away_goals" id="away_goals_{{ game.id }}" min="0" max="9" value="{{ game.away_goals }}">
-				{{ game.away_team.name }} <img src="{{ game.away_team.logo }}" alt="" height="2%" width="2%">
-				<br>
-			</div>
-		</form>
-		<script>
-			document.addEventListener('DOMContentLoaded', function() {
-				var homeGoalsInput = document.getElementById('home_goals_{{ game.id }}');
-				var awayGoalsInput = document.getElementById('away_goals_{{ game.id }}');
-				var form = document.getElementById('form_{{ game.id }}');
+		<div align="center" style="display: inline-block;">
+			<h4>RODADA {{current_round}}</h4>
+			{% for game in games_list %}
+			<form id="form_{{ game.id }}" method="post" action="{% url 'game' %}">
+				{% csrf_token %}
+				<div style="border: 1px solid gray;">
+					<input type="hidden" name="home_team" value="{{ game.home_team.name }}">
+					<input type="hidden" name="away_team" value="{{ game.away_team.name }}">
+					<input type="hidden" name="game_id" value="{{ game.id }}">
+					<img src="{{ game.home_team.logo }}" alt=""  height="5%" width="5%"> {{ game.home_team.name }}
+					<input style="margin-top: 1px;" type="number" name="home_goals" id="home_goals_{{ game.id }}" min="0" max="9" value="{{ game.home_goals }}">
+					x
+					<input style="margin-top: 1px;" type="number" name="away_goals" id="away_goals_{{ game.id }}" min="0" max="9" value="{{ game.away_goals }}">
+					{{ game.away_team.name }} <img src="{{ game.away_team.logo }}" alt="" height="5%" width="5%">
+					<p style="font-size: 12px;">{{ game.home_team.stadium }}</p>
+				<div\>
+			</form>
+		</div>
+			<script>
+				document.addEventListener('DOMContentLoaded', function() {
+					var homeGoalsInput = document.getElementById('home_goals_{{ game.id }}');
+					var awayGoalsInput = document.getElementById('away_goals_{{ game.id }}');
+					var form = document.getElementById('form_{{ game.id }}');
 
-				homeGoalsInput.addEventListener('input', function() {
-					checkInputs();
-				});
+					homeGoalsInput.addEventListener('input', function() {
+						checkInputs();
+					});
 
-				awayGoalsInput.addEventListener('input', function() {
-					checkInputs();
-				});
+					awayGoalsInput.addEventListener('input', function() {
+						checkInputs();
+					});
 
-				function checkInputs() {
-					if (homeGoalsInput.value !== '' && awayGoalsInput.value !== '') {
-						form.submit();
+					function checkInputs() {
+						if (homeGoalsInput.value !== '' && awayGoalsInput.value !== '') {
+							form.submit();
+						}
 					}
-				}
-			});
-		</script>
-		{% endfor %}
-		<br>
-		<form method="post" action="{% url 'prev_round' %}">
+				});
+			</script>
+			{% endfor %}
+			<br>
+			<form method="post" action="{% url 'prev_round' %}">
+				{% csrf_token %}
+				<input type="hidden" name="current_round" value="{{ current_round }}">
+				<button type="submit" {% if current_round == 1 %}disabled{% endif %}>Previous Round</button>
+			</form>
+			<form method="post" action="{% url 'next_round' %}">
+				{% csrf_token %}
+				<input type="hidden" name="current_round" value="{{ current_round }}">
+				<button type="submit">Next Round</button>
+			</form>
+			<form method="post" action="{% url 'restart' %}">
 			{% csrf_token %}
-			<input type="hidden" name="current_round" value="{{ current_round }}">
-			<button type="submit" {% if current_round == 1 %}disabled{% endif %}>Previous Round</button>
-		</form>
-		<form method="post" action="{% url 'next_round' %}">
-			{% csrf_token %}
-			<input type="hidden" name="current_round" value="{{ current_round }}">
-			<button type="submit">Next Round</button>
-		  </form>
-		<form method="post" action="{% url 'restart' %}">
-		{% csrf_token %}
-		<input type="submit" value="Restart">
-		</form>
-		<form method="post" action="{% url 'api' %}">
-			{% csrf_token %}
-			<input type="submit" value="API">
-		</form>
+			<input type="submit" value="Restart">
+			</form>
+			<form method="post" action="{% url 'api' %}">
+				{% csrf_token %}
+				<input type="submit" value="API">
+			</form>
 	</div>
 </body>
 </html>

@@ -4,7 +4,6 @@ def	create_teams(data):
 	for team_data in data['response']:
 		team_infos = team_data['team']
 		venue_infos = team_data['venue']
-
 		team = Team.objects.create(
 			id_name = team_infos['name'],
 			name = team_infos['name'],
@@ -57,8 +56,8 @@ def	get_updated_games(data):
 	for game_data, game in zip(data['response'], game_list):
 		game.home_goals = game_data['goals']['home']
 		game.away_goals = game_data['goals']['away']
-		game.save()
 		if (game_data['fixture']['status']['long'] == 'Match Finished'):
 			update_points(game, game.home_team, game.away_team)
 			game.played = True
 			print(game_data['fixture']['status']['long'])
+		game.save()
