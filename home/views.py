@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.template import loader
 from .models import Team, Game
 from .forms import Game_forms
+from .scripts import create_games, create_teams, get_updated_games
 import requests
 	
 # Create your views here.
@@ -113,20 +114,19 @@ def prev_round(request):
 
 def api_football(request):
 	if (request.method == 'POST'):
-		a = int(request.POST.get('current_round'))
-		print(f'o valor de round eh: {a}')
-		round = 'Regular Season - ' + str(request.POST.get('current_round'))
-		print(f'o valor de round eh: {round}')
 		url = "https://api-football-v1.p.rapidapi.com/v3/fixtures"
-		querystring = {"league":"71", "season":"2024", "round": round}
+		querystring = {"league":"71", "season":"2024"}
 		headers = {
 			"X-RapidAPI-Key": "a915c948a2mshd5daae6b916daabp1b5891jsn54b9950682d1",
 			"X-RapidAPI-Host": "api-football-v1.p.rapidapi.com"
 		}
 		response = requests.get(url, headers=headers, params=querystring)
 		data = response.json()
-		for game in data['response']:
-			game = game['teams']['home']['name'] + ' X ' + game['teams']['away']['name']
-			print (game)
-		print('oi')
+		get_updated_games(data)
+		print("test")
 	return(home(request, 1))
+
+""" 		a = int(request.POST.get('current_round'))
+		print(f'o valor de round eh: {a}')
+		round = 'Regular Season - ' + str(request.POST.get('current_round'))
+		print(f'o valor de round eh: {round}') """
