@@ -48,9 +48,19 @@
 		</div>
 		<div align="center" style="display: inline-block;">
 			<table class="table-responsive">
-			<h4>RODADA {{current_round}}</h4>
-			{% for game in games_list %}
-			<form id="form_{{ game.id }}" method="post" action="{% url 'game' %}">
+				<form method="post" action="{% url 'prev_round' %}">
+					{% csrf_token %}
+					<input type="hidden" name="current_round" value="{{ current_round }}">
+					<button type="submit" {% if current_round == 1 %}disabled{% endif %}>Rodada Anterior</button>
+				</form>
+				<h4>RODADA {{current_round}}</h4>
+				<form method="post" action="{% url 'next_round' %}">
+					{% csrf_token %}
+					<input type="hidden" name="current_round" value="{{ current_round }}">
+					<button type="submit" {% if current_round == 38 %}disabled{% endif %}>Proxima Rodada</button>
+				</form>
+				{% for game in games_list %}
+				<form id="form_{{ game.id }}" method="post" action="{% url 'game' %}">
 				{% csrf_token %}
 				<div style="border: 1px solid gray;">
 					<p style="font-size: 12px;">{{ game.timestamp }}</p>
@@ -90,16 +100,6 @@
 			{% endfor %}
 			</table>
 			<br>
-			<form method="post" action="{% url 'prev_round' %}">
-				{% csrf_token %}
-				<input type="hidden" name="current_round" value="{{ current_round }}">
-				<button type="submit" {% if current_round == 1 %}disabled{% endif %}>Rodada Anterior</button>
-			</form>
-			<form method="post" action="{% url 'next_round' %}">
-				{% csrf_token %}
-				<input type="hidden" name="current_round" value="{{ current_round }}">
-				<button type="submit">Proxima Rodada</button>
-			</form>
 			<form method="post" action="{% url 'restart' %}">
 			{% csrf_token %}
 			<input type="submit" value="Restart">
