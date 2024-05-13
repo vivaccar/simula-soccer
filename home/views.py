@@ -33,6 +33,10 @@ def reset_result(game, home_team, away_team):
 		away_team.wins -= 1
 		home_team.loss -= 1
 		away_team.points -= 3
+	game.home_goals = None
+	game.away_goals = None
+	game.played = False
+	game.save()
 	home_team.save()
 	away_team.save()
 
@@ -89,8 +93,7 @@ def game(request, round=1):
 	context = {'teams_list': teams_list, 'games_list': games_list, 'current_round' : round}
 	return render(request, 'home.html', context)
 
-def	restart_teams():
-	teams_list = Team.objects.all()
+def	restart_teams(teams_list):
 	for team in teams_list:
 		team.points = 0
 		team.goals_pro = 0
@@ -102,8 +105,7 @@ def	restart_teams():
 		team.games_played = 0
 		team.save()
 	
-def	restart_games():
-	game_list = Game.objects.all()
+def	restart_games(game_list):
 	for game in game_list:
 		game.home_goals = None
 		game.away_goals = None
@@ -111,9 +113,23 @@ def	restart_games():
 		game.save()
 
 def	restart(request):
-	restart_teams()
-	restart_games()
-	return game(request, 1)
+	restart_teams(Team.objects.all())
+	restart_games(Game.objects.all())
+
+def reset_simulation(request):
+	game_list = Game.objects.all()
+	if (request.method == 'POST'):
+		for game in game_list:
+			if (game.played == True and game.real_played == False):
+				print(game)
+				print(game.played)
+				print(game.real_played)
+				reset_result(game, game.home_team, game.away_team)
+	games_list = Game.objects.filter(round = 1)
+	teams_list = Team.objects.order_by('-points', '-wins', '-sg')
+	context = {'teams_list': teams_list, 'games_list': games_list, 'current_round' : 1}
+	return render(request, 'home.html', context)
+
 
 def next_round(request):
 	round = int(request.POST.get('current_round'))
@@ -141,4 +157,4 @@ def api_football(request):
 		data = response.json()
 		restart(request)
 		get_updated_games(data)
-	return(home(request, 1))
+	return(home(request))
