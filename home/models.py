@@ -27,6 +27,7 @@ class	Game(models.Model):
 	away_logo = models.CharField(max_length=150, default=None)
 	played = models.BooleanField(default=False)
 	round = models.IntegerField(default = 1)
+	timestamp = models.CharField(max_length=150, default=None)
 
 	def __str__(self):
 		return self.home_team.name + ' X ' + self.away_team.name

@@ -1,4 +1,5 @@
 from .models import Team, Game
+from django.utils import timezone
 
 def	create_teams(data):
 	for team_data in data['response']:
@@ -10,7 +11,6 @@ def	create_teams(data):
 			stadium = venue_infos['name'],
 			logo = team_infos['logo']
 		)
-		team.save()
 
 def create_games(data):
 	rd = 1
@@ -54,6 +54,10 @@ def	update_points(game, home_team, away_team):
 def	get_updated_games(data):
 	game_list = Game.objects.all()
 	for game_data, game in zip(data['response'], game_list):
+		timestamp = game_data['fixture']['timestamp']
+		time_utc = timezone.datetime.utcfromtimestamp(timestamp)
+		local_utc = time_utc.astimezone(timezone.get_current_timezone())
+		game.timestamp = local_utc
 		game.home_goals = game_data['goals']['home']
 		game.away_goals = game_data['goals']['away']
 		if (game_data['fixture']['status']['long'] == 'Match Finished'):
