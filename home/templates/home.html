@@ -13,17 +13,19 @@
 	<br>
 	<div style="overflow: hidden;">
 		<div style="width: 50%; float: left; margin-left: 5%;">
-			<table class="table-bordered">
+			<table class="table-responsive">
 				<thead>
 					<th>#</th>
 					<th>Time</th>
 					<th>Pontos</th>
+					<th>Jogos</th>
 					<th>Vitorias</th>
 					<th>Empates</th>
 					<th>Derrotas</th>
 					<th>Gols</th>
 					<th>Gols sofridos</th>
 					<th>Saldo de Gols</th>
+					<th>Aproveitamento</th>
 				</thead>
 				<tbody>
 					{% for team in teams_list %}
@@ -31,36 +33,40 @@
 						<td>{{ forloop.counter }}</td>
 						<td><img src="{{ team.logo }}" alt="" width="10%" height="10%"> {{ team.name }}</td>
 						<td>{{ team.points }}</td>
+						<td>{{ team.games_played }}</td>
 						<td>{{ team.wins }}</td>
 						<td>{{ team.draws }}</td>
 						<td>{{ team.loss }}</td>
 						<td>{{ team.goals_pro }}</td>
 						<td>{{ team.goals_con }}</td>
 						<td>{{ team.sg }}</td>
+						<td>{{ team.aproveitamento }}%</td>
 					</tr>
 					{% endfor %}
 				</tbody>
 			</table>
 		</div>
 		<div align="center" style="display: inline-block;">
+			<table class="table-responsive">
 			<h4>RODADA {{current_round}}</h4>
 			{% for game in games_list %}
 			<form id="form_{{ game.id }}" method="post" action="{% url 'game' %}">
 				{% csrf_token %}
 				<div style="border: 1px solid gray;">
+					<p style="font-size: 12px;">{{ game.timestamp }}</p>
 					<input type="hidden" name="home_team" value="{{ game.home_team.name }}">
 					<input type="hidden" name="away_team" value="{{ game.away_team.name }}">
 					<input type="hidden" name="game_id" value="{{ game.id }}">
 					<img src="{{ game.home_team.logo }}" alt=""  height="5%" width="5%"> {{ game.home_team.name }}
-					<input style="margin-top: 1px;" type="number" name="home_goals" id="home_goals_{{ game.id }}" min="0" max="9" value="{{ game.home_goals }}">
-					x
-					<input style="margin-top: 1px;" type="number" name="away_goals" id="away_goals_{{ game.id }}" min="0" max="9" value="{{ game.away_goals }}">
+					<input type="number" {% if game.real_played == True %}disabled{% endif %} name="home_goals" id="home_goals_{{ game.id }}" min="0" max="9" value="{{ game.home_goals }}">	
+					X
+					<input type="number"  {% if game.real_played == True %}disabled{% endif %} name="away_goals" id="away_goals_{{ game.id }}" min="0" max="9" value="{{ game.away_goals }}">
 					{{ game.away_team.name }} <img src="{{ game.away_team.logo }}" alt="" height="5%" width="5%">
 					<p style="font-size: 12px;">{{ game.home_team.stadium }}</p>
 				<div\>
 			</form>
 		</div>
-			<script>
+		<script>
 				document.addEventListener('DOMContentLoaded', function() {
 					var homeGoalsInput = document.getElementById('home_goals_{{ game.id }}');
 					var awayGoalsInput = document.getElementById('away_goals_{{ game.id }}');
@@ -82,16 +88,17 @@
 				});
 			</script>
 			{% endfor %}
+			</table>
 			<br>
 			<form method="post" action="{% url 'prev_round' %}">
 				{% csrf_token %}
 				<input type="hidden" name="current_round" value="{{ current_round }}">
-				<button type="submit" {% if current_round == 1 %}disabled{% endif %}>Previous Round</button>
+				<button type="submit" {% if current_round == 1 %}disabled{% endif %}>Rodada Anterior</button>
 			</form>
 			<form method="post" action="{% url 'next_round' %}">
 				{% csrf_token %}
 				<input type="hidden" name="current_round" value="{{ current_round }}">
-				<button type="submit">Next Round</button>
+				<button type="submit">Proxima Rodada</button>
 			</form>
 			<form method="post" action="{% url 'restart' %}">
 			{% csrf_token %}

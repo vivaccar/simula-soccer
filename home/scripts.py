@@ -1,4 +1,6 @@
 from .models import Team, Game
+from math import modf
+from django.utils import timezone
 
 def	create_teams(data):
 	for team_data in data['response']:
@@ -10,7 +12,6 @@ def	create_teams(data):
 			stadium = venue_infos['name'],
 			logo = team_infos['logo']
 		)
-		team.save()
 
 def create_games(data):
 	rd = 1
@@ -28,7 +29,9 @@ def create_games(data):
 			rd += 1
 			i = 1
 
-def	update_points(game, home_team, away_team):
+def	update_table(game, home_team, away_team):
+		home_team.games_played += 1
+		away_team.games_played += 1
 		home_team.goals_pro += game.home_goals
 		away_team.goals_pro += game.away_goals
 		home_team.goals_con += game.away_goals
@@ -48,16 +51,27 @@ def	update_points(game, home_team, away_team):
 			away_team.wins += 1
 			home_team.loss += 1
 			away_team.points += 3
+		home_team.aproveitamento = aproveitamento(home_team)
+		away_team.aproveitamento = aproveitamento(away_team)
 		home_team.save()
 		away_team.save()
 
 def	get_updated_games(data):
 	game_list = Game.objects.all()
 	for game_data, game in zip(data['response'], game_list):
+		timestamp = game_data['fixture']['timestamp']
+		time_utc = timezone.datetime.utcfromtimestamp(timestamp)
+		local_utc = time_utc.astimezone(timezone.get_current_timezone())
+		game.timestamp = local_utc
 		game.home_goals = game_data['goals']['home']
 		game.away_goals = game_data['goals']['away']
 		if (game_data['fixture']['status']['long'] == 'Match Finished'):
-			update_points(game, game.home_team, game.away_team)
-			game.played = True
+			update_table(game, game.home_team, game.away_team)
+			game.real_played = True
 			print(game_data['fixture']['status']['long'])
 		game.save()
+
+def aproveitamento(team):
+	disputed = team.games_played * 3
+	gained = team.points
+	return round((gained/disputed) * 100, 1)

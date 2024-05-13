@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.template import loader
 from .models import Team, Game
 from .forms import Game_forms
-from .scripts import create_games, create_teams, get_updated_games
+from .scripts import create_games, create_teams, get_updated_games, aproveitamento
 import requests
 	
 # Create your views here.
@@ -16,6 +16,8 @@ def	home(request, current_round):
 	return (render(request, 'home.html', context))
 
 def reset_result(game, home_team, away_team):
+	home_team.games_played -= 1
+	away_team.games_played -= 1
 	home_team.goals_pro -= game.home_goals
 	home_team.goals_con -= game.away_goals
 	away_team.goals_pro -= game.away_goals
@@ -51,6 +53,8 @@ def game(request):
 		round = game_class.round
 		if game_class.played == True:
 			reset_result(game_class, home_team, away_team)
+		home_team.games_played += 1
+		away_team.games_played += 1
 		home_team.goals_pro += home_goals
 		game_class.home_goals = home_goals
 		home_team.goals_con += away_goals
@@ -72,6 +76,8 @@ def game(request):
 			away_team.wins += 1
 			home_team.loss += 1
 			away_team.points += 3
+		home_team.aproveitamento = aproveitamento(home_team)
+		away_team.aproveitamento = aproveitamento(away_team)
 		game_class.played = True
 		game_class.save()
 		home_team.save()
@@ -89,7 +95,7 @@ def	restart_teams():
 		team.loss = 0
 		team.draws = 0
 		team.sg = 0
-		print ('oi')
+		team.games_played = 0
 		team.save()
 	
 def	restart_games():
@@ -123,5 +129,6 @@ def api_football(request):
 		}
 		response = requests.get(url, headers=headers, params=querystring)
 		data = response.json()
+		restart(request)
 		get_updated_games(data)
 	return(home(request, 1))
