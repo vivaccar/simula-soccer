@@ -30,6 +30,7 @@ class	Game(models.Model):
 	real_played= models.BooleanField(default=False)
 	round = models.IntegerField(default = 1)
 	timestamp = models.CharField(max_length=150, default=None)
+	local_time = models.CharField(max_length=150, default=None, null=True, blank=True)
 
 	def __str__(self):
 		return self.home_team.name + ' X ' + self.away_team.name

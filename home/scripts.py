@@ -20,8 +20,6 @@ def create_games(data):
 		game = Game.objects.create(
 			home_team = Team.objects.get(id_name = game_data['teams']['home']['name']),
 			away_team = Team.objects.get(id_name = game_data['teams']['away']['name']),
-			home_logo = game_data['teams']['home']['logo'],
-			away_logo = game_data['teams']['away']['logo'],
 			round = rd
 		)
 		i += 1
@@ -60,9 +58,10 @@ def	get_updated_games(data):
 	game_list = Game.objects.all()
 	for game_data, game in zip(data['response'], game_list):
 		timestamp = game_data['fixture']['timestamp']
+		game.timestamp = timestamp
 		time_utc = timezone.datetime.utcfromtimestamp(timestamp)
 		local_utc = time_utc.astimezone(timezone.get_current_timezone())
-		game.timestamp = local_utc
+		game.local_time = local_utc
 		game.home_goals = game_data['goals']['home']
 		game.away_goals = game_data['goals']['away']
 		if (game_data['fixture']['status']['long'] == 'Match Finished'):

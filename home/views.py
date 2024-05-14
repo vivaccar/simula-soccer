@@ -4,7 +4,7 @@ from django.template import loader
 from .models import Team, Game
 from .forms import Game_forms
 from .scripts import create_games, create_teams, get_updated_games, aproveitamento
-import requests
+import requests, time
 	
 # Create your views here.
 
@@ -40,6 +40,16 @@ def reset_result(game, home_team, away_team):
 	home_team.save()
 	away_team.save()
 
+def current_timestamp():
+    return int(time.time())
+
+def	get_current_round():
+	cur_timestamp = current_timestamp()
+	game_list = Game.objects.all()
+	for game in game_list:
+		game_time = int(game.timestamp)
+		if game_time > cur_timestamp:
+			return game.round
 
 
 def game(request, round=1):
@@ -88,6 +98,7 @@ def game(request, round=1):
 		teams_list = Team.objects.order_by('-points', '-wins', '-sg')
 		context = {'teams_list': teams_list, 'games_list': games_list, 'current_round' : round}
 		return render(request, 'home.html', context)
+	round = get_current_round()
 	games_list = Game.objects.filter(round = round)
 	teams_list = Team.objects.order_by('-points', '-wins', '-sg')
 	context = {'teams_list': teams_list, 'games_list': games_list, 'current_round' : round}
@@ -121,13 +132,11 @@ def reset_simulation(request):
 	if (request.method == 'POST'):
 		for game in game_list:
 			if (game.played == True and game.real_played == False):
-				print(game)
-				print(game.played)
-				print(game.real_played)
 				reset_result(game, game.home_team, game.away_team)
-	games_list = Game.objects.filter(round = 1)
+	round = get_current_round()
+	games_list = Game.objects.filter(round = round)
 	teams_list = Team.objects.order_by('-points', '-wins', '-sg')
-	context = {'teams_list': teams_list, 'games_list': games_list, 'current_round' : 1}
+	context = {'teams_list': teams_list, 'games_list': games_list, 'current_round' : round}
 	return render(request, 'home.html', context)
 
 
