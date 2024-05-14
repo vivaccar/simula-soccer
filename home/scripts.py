@@ -1,6 +1,7 @@
-from .models import Team, Game
+from .models import Team, Game, League
 from math import modf
 from django.utils import timezone
+import requests
 
 def	create_teams(data):
 	for team_data in data['response']:
@@ -62,6 +63,7 @@ def	get_updated_games(data):
 		time_utc = timezone.datetime.utcfromtimestamp(timestamp)
 		local_utc = time_utc.astimezone(timezone.get_current_timezone())
 		game.local_time = local_utc
+		game.league_id = game_data['league']['id']
 		game.home_goals = game_data['goals']['home']
 		game.away_goals = game_data['goals']['away']
 		if (game_data['fixture']['status']['long'] == 'Match Finished'):
@@ -69,6 +71,29 @@ def	get_updated_games(data):
 			game.real_played = True
 			print(game_data['fixture']['status']['long'])
 		game.save()
+
+def	create_league():
+		url = "https://api-football-v1.p.rapidapi.com/v3/leagues"
+		querystring = {"id":"71"}
+		headers = {
+		"X-RapidAPI-Key": "1b8ffa34e2mshb6c3096387b53eep1345dcjsn899e6d7dd07c",
+		"X-RapidAPI-Host": "api-football-v1.p.rapidapi.com"
+		}
+		response = requests.get(url, headers=headers, params=querystring)
+		data = response.json()
+		league = League.objects.create(
+			league_id = data['response'][0]['league']['id'],
+			league_name = data['response'][0]['league']['name'],
+			logo = data['response'][0]['league']['logo'],
+			country = data['response'][0]['country']['name']
+		)
+
+
+def	update_teams():
+	teams_list = Team.objects.all()
+	for item in teams_list:
+		item.league_id = 71
+		item.save()
 
 def aproveitamento(team):
 	disputed = team.games_played * 3

@@ -8,107 +8,148 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
+<style>
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+/*     @media (max-width: 768px) {
+        .right-column {
+            margin-top: 20px;
+        }
+    }
+    
+    .left-column {
+        margin-right: 10px;
+    }*/
+
+    .right-column {
+        margin-left: 10%;
+    }
+</style>
 <body>
-	<h6 style="margin: 10px;"><a class="link-offset-2 link-underline link-underline-opacity-0" href="{% url 'home' %}">Voltar</a></h6>
-	<h1 style="text-align: center;">SimulaSoccer</h1>
+	<nav class="navbar navbar-inverse" style="background-color: green;">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<a href="{% url 'home' %}"><h2>SimulaSoccer</h2></a>
+			  </div>
+		</div>
+	</nav>
 	<br>
-	<div style="overflow: hidden;">
-		<div style="width: 50%; float: left; margin-left: 1%;">
-			<table class="table-bordered">
-				<thead>
-					<th>#</th>
-					<th>Time</th>
-					<th>Pontos</th>
-					<th>Jogos</th>
-					<th>Vitorias</th>
-					<th>Empates</th>
-					<th>Derrotas</th>
-					<th>Gols</th>
-					<th>Gols sofridos</th>
-					<th>Saldo de Gols</th>
-					<th>Aproveitamento</th>
-				</thead>
-				<tbody>
-					{% for team in teams_list %}
-					<tr>
-						<td>{{ forloop.counter }}</td>
-						<td><img src="{{ team.logo }}" alt="" width="10%" height="10%"> {{ team.name }}</td>
-						<td>{{ team.points }}</td>
-						<td>{{ team.games_played }}</td>
-						<td>{{ team.wins }}</td>
-						<td>{{ team.draws }}</td>
-						<td>{{ team.loss }}</td>
-						<td>{{ team.goals_pro }}</td>
-						<td>{{ team.goals_con }}</td>
-						<td>{{ team.sg }}</td>
-						<td>{{ team.aproveitamento }}%</td>
-					</tr>
+	<h2 style="text-align: center;">Brasileiro Serie A</h2>
+	<br>
+	<div class="container-fluid">
+		<div class="row" style="width: 100%;">
+			<div class="col-lg-6 left-column">
+				<div class="table-responsive">
+					<table class="table-striped">
+						<thead>
+							<th>Tabela</th>
+							<th></th>
+							<th>Pontos</th>
+							<th>Jogos</th>
+							<th>Vitorias</th>
+							<th>Empates</th>
+							<th>Derrotas</th>
+							<th>Gols</th>
+							<th>Gols sofridos</th>
+							<th>Saldo de gols</th>
+							<th>Aproveitamento</th>
+						</thead>
+						<tbody>
+							{% for team in teams_list %}
+							<tr>
+								<td class="text-center mb-4">{{ forloop.counter }}</td>
+								<td><img src="{{ team.logo }}" alt="" width="15%" height="15%"> {{ team.name }}</td>
+								<td class="text-center mb-4">{{ team.points }}</td>
+								<td class="text-center mb-4">{{ team.games_played }}</td>
+								<td class="text-center mb-4">{{ team.wins }}</td>
+								<td class="text-center mb-4">{{ team.draws }}</td>
+								<td class="text-center mb-4">{{ team.loss }}</td>
+								<td class="text-center mb-4">{{ team.goals_pro }}</td>
+								<td class="text-center mb-4">{{ team.goals_con }}</td>
+								<td class="text-center mb-4">{{ team.sg }}</td>
+								<td class="text-center mb-4">{{ team.aproveitamento }}%</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="right-column">
+	            <div class="d-flex justify-content-between align-items-center mt-4">
+					<form class="d-inline" method="post" action="{% url 'prev_round' %}">
+						{% csrf_token %}
+						<input type="hidden" name="current_round" value="{{ current_round }}">
+						<button type="submit" class="btn btn-outline-success btn-sm" {% if current_round == 1 %}disabled{% endif %}>
+							<i class="fas fa-chevron-left"></i> Anterior
+						</button>
+					</form>
+					<h6 style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">RODADA {{current_round}}</h6>
+					<form class="d-inline" method="post" action="{% url 'next_round' %}">
+						{% csrf_token %}
+						<input type="hidden" name="current_round" value="{{ current_round }}">
+						<button type="submit" class="btn btn-outline-success btn-sm" {% if current_round == 38 %}disabled{% endif %}>
+							Próxima <i class="fas fa-chevron-right"></i>
+						</button>
+					</form>
+				</div>
+				<br>
+				<ul class="list-group">
+					{% for game in games_list %}
+					<form id="form_{{ game.id }}" method="post" action="{% url 'brasil_serie_a' %}">
+					{% csrf_token %}
+					<div style="border-bottom: 1px solid rgb(84, 82, 117);">
+						<input type="hidden" name="home_team" value="{{ game.home_team.name }}">
+						<input type="hidden" name="away_team" value="{{ game.away_team.name }}">
+						<input type="hidden" name="game_id" value="{{ game.id }}">
+						<img src="{{ game.home_team.logo }}" alt=""  height="4%" width="4%"> {{ game.home_team.name }}
+						<input type="number" {% if game.real_played == True %}disabled{% endif %} name="home_goals" id="home_goals_{{ game.id }}" min="0" max="9" value="{{ game.home_goals }}">	
+						X
+						<input type="number"  {% if game.real_played == True %}disabled{% endif %} name="away_goals" id="away_goals_{{ game.id }}" min="0" max="9" value="{{ game.away_goals }}">
+						{{ game.away_team.name }} <img src="{{ game.away_team.logo }}" alt="" height="4%" width="4%">
+						<p style="font-size: 12px;">{{ game.home_team.stadium }} - {{ game.local_time }}</p>
+					</div>
+					</form>
+					<script>
+						document.addEventListener('DOMContentLoaded', function() {
+							var homeGoalsInput = document.getElementById('home_goals_{{ game.id }}');
+							var awayGoalsInput = document.getElementById('away_goals_{{ game.id }}');
+							var form = document.getElementById('form_{{ game.id }}');
+			
+							homeGoalsInput.addEventListener('input', function() {
+								checkInputs();
+							});
+			
+							awayGoalsInput.addEventListener('input', function() {
+								checkInputs();
+							});
+			
+							function checkInputs() {
+								if (homeGoalsInput.value !== '' && awayGoalsInput.value !== '') {
+									form.submit();
+								}
+							}
+						});
+					</script>
 					{% endfor %}
-				</tbody>
-			</table>
+				</ul>
+			</div>
 		</div>
-		<div align="center" style="display: inline-block;">
-			<table class="table-bordered">
-				<form method="post" action="{% url 'prev_round' %}">
-					{% csrf_token %}
-					<input type="hidden" name="current_round" value="{{ current_round }}">
-					<button type="submit" {% if current_round == 1 %}disabled{% endif %}>Rodada Anterior</button>
-				</form>
-				<h4>RODADA {{current_round}}</h4>
-				<form method="post" action="{% url 'next_round' %}">
-					{% csrf_token %}
-					<input type="hidden" name="current_round" value="{{ current_round }}">
-					<button type="submit" {% if current_round == 38 %}disabled{% endif %}>Proxima Rodada</button>
-				</form>
-				{% for game in games_list %}
-				<form id="form_{{ game.id }}" method="post" action="{% url 'game' %}">
-				{% csrf_token %}
-				<div style="border: 1px solid gray;">
-					<p style="font-size: 12px;">{{ game.local_time }}</p>
-					<input type="hidden" name="home_team" value="{{ game.home_team.name }}">
-					<input type="hidden" name="away_team" value="{{ game.away_team.name }}">
-					<input type="hidden" name="game_id" value="{{ game.id }}">
-					<img src="{{ game.home_team.logo }}" alt=""  height="5%" width="5%"> {{ game.home_team.name }}
-					<input type="number" {% if game.real_played == True %}disabled{% endif %} name="home_goals" id="home_goals_{{ game.id }}" min="0" max="9" value="{{ game.home_goals }}">	
-					X
-					<input type="number"  {% if game.real_played == True %}disabled{% endif %} name="away_goals" id="away_goals_{{ game.id }}" min="0" max="9" value="{{ game.away_goals }}">
-					{{ game.away_team.name }} <img src="{{ game.away_team.logo }}" alt="" height="5%" width="5%">
-					<p style="font-size: 12px;">{{ game.home_team.stadium }}</p>
-				<div\>
-			</form>
-		</div>
-		<script>
-				document.addEventListener('DOMContentLoaded', function() {
-					var homeGoalsInput = document.getElementById('home_goals_{{ game.id }}');
-					var awayGoalsInput = document.getElementById('away_goals_{{ game.id }}');
-					var form = document.getElementById('form_{{ game.id }}');
-
-					homeGoalsInput.addEventListener('input', function() {
-						checkInputs();
-					});
-
-					awayGoalsInput.addEventListener('input', function() {
-						checkInputs();
-					});
-
-					function checkInputs() {
-						if (homeGoalsInput.value !== '' && awayGoalsInput.value !== '') {
-							form.submit();
-						}
-					}
-				});
-			</script>
-			{% endfor %}
-			</table>
-			<br>
-			<form method="post" action="{% url 'restart' %}">
-			{% csrf_token %}
-			<input type="submit" value="Restart">
-			</form>
-			<form method="post" action="{% url 'api' %}">
-				{% csrf_token %}
-				<input type="submit" value="API">
-			</form>
 	</div>
+	<br>
 </body>
+<div align="center">
+	<form method="post" action="{% url 'restart' %}">
+	{% csrf_token %}
+	<button type="submit" class="btn btn-outline-success btn-sm">
+		Restart <i class="fas fa-chevron-right"></i>
+	</button>
+	</form>
+</div>	
+<form method="post" action="{% url 'api' %}">
+{% csrf_token %}
+<input type="submit" value="API">
+</form>
 </html>
+

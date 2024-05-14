@@ -9,7 +9,7 @@ import requests, time
 # Create your views here.
 
 def	home(request):
-	return render(request, 'index.html') 
+	return render(request, 'index.html')
 
 def reset_result(game, home_team, away_team):
 	home_team.games_played -= 1
@@ -52,7 +52,7 @@ def	get_current_round():
 			return game.round
 
 
-def game(request, round=1):
+def brasil_serie_a(request, round=1):
 	if request.method == 'POST':
 		home_team_name = request.POST.get('home_team')
 		home_goals = int(request.POST.get('home_goals'))

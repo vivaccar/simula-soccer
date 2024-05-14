@@ -5,6 +5,7 @@ from django.db import models
 class	Team(models.Model):
 	id_name = models.CharField(max_length=30, default=None)
 	name = models.CharField(max_length = 20, default=None)
+	league_id = models.IntegerField(default=None, null=True, blank=True)
 	stadium = models.CharField(max_length=50, default=None)
 	logo = models.CharField(max_length=150, default=None)
 	points = models.IntegerField(default = 0)
@@ -22,6 +23,7 @@ class	Team(models.Model):
 	
 
 class	Game(models.Model):
+	league_id = models.IntegerField(default=None, null=True, blank=True)
 	home_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='home_team')
 	away_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='away_team')
 	home_goals = models.IntegerField(default = None, null=True, blank=True)
@@ -34,3 +36,17 @@ class	Game(models.Model):
 
 	def __str__(self):
 		return self.home_team.name + ' X ' + self.away_team.name
+
+class	League(models.Model):
+	league_id = models.IntegerField(default=None, null=True, blank=True)
+	league_name = models.CharField(max_length=30, default=None)
+	logo = logo = models.CharField(max_length=150, default=None)
+	country = models.CharField(max_length = 30, default=None)
+
+	def	get_games_from_league(cls):
+		games = Game.objects.filter(league_id=cls.league_id)
+		return games
+	
+	def	get_teams_from_league(cls):
+		teams = Game.objects.filter(league_id=cls.league_id)
+		return teams
