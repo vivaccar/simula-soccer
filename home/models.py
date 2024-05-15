@@ -31,7 +31,7 @@ class	Game(models.Model):
 	played = models.BooleanField(default=False)
 	real_played= models.BooleanField(default=False)
 	round = models.IntegerField(default = 1)
-	timestamp = models.CharField(max_length=150, default=None)
+	timestamp = models.CharField(max_length=150, null=True, default=None)
 	local_time = models.CharField(max_length=150, default=None, null=True, blank=True)
 
 	def __str__(self):
@@ -42,6 +42,7 @@ class	League(models.Model):
 	league_name = models.CharField(max_length=30, default=None)
 	logo = logo = models.CharField(max_length=150, default=None)
 	country = models.CharField(max_length = 30, default=None)
+	url = models.CharField(max_length=150, null=True, blank=True, default = '')
 
 	def	get_games_from_league(cls):
 		games = Game.objects.filter(league_id=cls.league_id)
@@ -50,3 +51,6 @@ class	League(models.Model):
 	def	get_teams_from_league(cls):
 		teams = Game.objects.filter(league_id=cls.league_id)
 		return teams
+
+	def __str__(self):
+		return self.league_name

@@ -21,7 +21,9 @@ def create_games(data):
 		game = Game.objects.create(
 			home_team = Team.objects.get(id_name = game_data['teams']['home']['name']),
 			away_team = Team.objects.get(id_name = game_data['teams']['away']['name']),
-			round = rd
+			timestamp = game_data['fixture']['timestamp'],
+			round = rd,
+			league_id = 72
 		)
 		i += 1
 		if i == 11:
@@ -55,8 +57,9 @@ def	update_table(game, home_team, away_team):
 		home_team.save()
 		away_team.save()
 
+
 def	get_updated_games(data):
-	game_list = Game.objects.all()
+	game_list = Game.objects.filter(league_id = 71)
 	for game_data, game in zip(data['response'], game_list):
 		timestamp = game_data['fixture']['timestamp']
 		game.timestamp = timestamp
@@ -72,9 +75,9 @@ def	get_updated_games(data):
 			print(game_data['fixture']['status']['long'])
 		game.save()
 
-def	create_league():
+def	create_league(league_id):
 		url = "https://api-football-v1.p.rapidapi.com/v3/leagues"
-		querystring = {"id":"71"}
+		querystring = {"id": league_id, "season": "2024"}
 		headers = {
 		"X-RapidAPI-Key": "1b8ffa34e2mshb6c3096387b53eep1345dcjsn899e6d7dd07c",
 		"X-RapidAPI-Host": "api-football-v1.p.rapidapi.com"
@@ -88,14 +91,21 @@ def	create_league():
 			country = data['response'][0]['country']['name']
 		)
 
-
 def	update_teams():
-	teams_list = Team.objects.all()
+	teams_list = Team.objects.filter(id__range=(61, 79))
 	for item in teams_list:
-		item.league_id = 71
+		item.league_id = 72
+		item.save()
+
+def	update_games():	
+	games_list = Game.objects.filter(id__range=(381, 760))
+	for item in games_list:
+		item.league_id = 72
 		item.save()
 
 def aproveitamento(team):
 	disputed = team.games_played * 3
 	gained = team.points
+	if gained == 0:
+		return 0
 	return round((gained/disputed) * 100, 1)

@@ -1,15 +1,17 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.template import loader
-from .models import Team, Game
+from .models import Team, Game, League
 from .forms import Game_forms
-from .scripts import create_games, create_teams, get_updated_games, aproveitamento
+from .scripts import create_games, create_teams, get_updated_games, aproveitamento, create_league, update_teams, update_games
 import requests, time
 	
 # Create your views here.
 
 def	home(request):
-	return render(request, 'index.html')
+	leagues_list = League.objects.all()
+	context = {"leagues_list": leagues_list}
+	return render(request, 'index.html', context)
 
 def reset_result(game, home_team, away_team):
 	home_team.games_played -= 1
@@ -36,6 +38,8 @@ def reset_result(game, home_team, away_team):
 	game.home_goals = None
 	game.away_goals = None
 	game.played = False
+	home_team.aproveitamento = aproveitamento(home_team)
+	away_team.aproveitamento = aproveitamento(away_team)
 	game.save()
 	home_team.save()
 	away_team.save()
@@ -43,16 +47,109 @@ def reset_result(game, home_team, away_team):
 def current_timestamp():
     return int(time.time())
 
-def	get_current_round():
+def	get_current_round(league_id):
 	cur_timestamp = current_timestamp()
-	game_list = Game.objects.all()
+	game_list = Game.objects.filter(league_id = league_id)
 	for game in game_list:
 		game_time = int(game.timestamp)
 		if game_time > cur_timestamp:
 			return game.round
 
-
 def brasil_serie_a(request, round=1):
+	exec_game(request)
+	round = get_current_round(71)
+	league = League.objects.all()
+	games_list = Game.objects.filter(league_id = 71, round = round)
+	teams_list = Team.objects.filter(league_id = 71)
+	teams_list = teams_list.order_by('-points', '-wins', '-sg')
+	context = {'league': league[0], 'teams_list': teams_list, 'games_list': games_list, 'current_round' : round}
+	return render(request, 'home.html', context)
+
+def brasil_serie_b(request, round=1):
+	exec_game(request)
+	round = get_current_round(72)
+	league = League.objects.all()
+	games_list = Game.objects.filter(league_id = 72, round = round)
+	teams_list = Team.objects.filter(league_id = 72)
+	teams_list = teams_list.order_by('-points', '-wins', '-sg')
+	context = {'league': league[1], 'teams_list': teams_list, 'games_list': games_list, 'current_round' : round}
+	return render(request, 'home.html', context)
+
+def	restart_teams(teams_list):
+	for team in teams_list:
+		team.points = 0
+		team.goals_pro = 0
+		team.goals_con = 0
+		team.wins = 0
+		team.loss = 0
+		team.draws = 0
+		team.sg = 0
+		team.games_played = 0
+		team.save()
+	
+def	restart_games(game_list):
+	for game in game_list:
+		game.home_goals = None
+		game.away_goals = None
+		game.played = False
+		game.save()
+
+def	restart(request):
+	restart_teams(Team.objects.all())
+	restart_games(Game.objects.all())
+
+def reset_simulation(request):
+	league_id = int(request.POST.get('league_id'))
+	game_list = Game.objects.filter(league_id = league_id)
+	if (request.method == 'POST'):
+		for game in game_list:
+			if (game.played == True and game.real_played == False):
+				reset_result(game, game.home_team, game.away_team)
+	round = get_current_round(league_id)
+	games_list = Game.objects.filter(league_id = league_id, round = round)
+	teams_list = Team.objects.filter(league_id = league_id)
+	teams_list = teams_list.order_by('-points', '-wins', '-sg')
+	league = League.objects.get(league_id = league_id)
+	context = {'teams_list': teams_list, 'games_list': games_list, 'current_round' : round, 'league': league}
+	return render(request, 'home.html', context)
+
+
+def next_round(request):
+	round = int(request.POST.get('current_round'))
+	league_id = int(request.POST.get('league_id'))
+	games_list = Game.objects.filter(league_id = league_id, round = round + 1)
+	teams_list = Team.objects.filter(league_id = league_id)
+	teams_list = teams_list.order_by('-points', '-wins', '-sg')
+	league = League.objects.get(league_id = league_id)
+	context = {'teams_list': teams_list, 'games_list': games_list, 'current_round' : round + 1, 'league': league}
+	return render(request, 'home.html', context)
+
+def prev_round(request):
+	round = int(request.POST.get('current_round'))
+	league_id = int(request.POST.get('league_id'))
+	games_list = Game.objects.filter(league_id = league_id, round = round - 1)
+	teams_list = Team.objects.filter(league_id = league_id)
+	teams_list = teams_list.order_by('-points', '-wins', '-sg')
+	league = League.objects.get(league_id = league_id)
+	context = {'teams_list': teams_list, 'games_list': games_list, 'current_round' : round - 1, 'league': league}
+	return render(request, 'home.html', context)
+
+def api_football(request):
+	""" if (request.method == 'POST'):
+		url = "https://api-football-v1.p.rapidapi.com/v3/fixtures"
+		querystring = {"league":"71", "season":"2024"}
+		headers = {
+			"X-RapidAPI-Key": "a915c948a2mshd5daae6b916daabp1b5891jsn54b9950682d1",
+			"X-RapidAPI-Host": "api-football-v1.p.rapidapi.com"
+		}
+		response = requests.get(url, headers=headers, params=querystring)
+		data = response.json()
+		restart(request)
+		get_updated_games(data) """
+	update_games()
+	return(home(request))
+
+def exec_game(request):
 	if request.method == 'POST':
 		home_team_name = request.POST.get('home_team')
 		home_goals = int(request.POST.get('home_goals'))
@@ -94,76 +191,3 @@ def brasil_serie_a(request, round=1):
 		game_class.save()
 		home_team.save()
 		away_team.save()
-		games_list = Game.objects.filter(round = round)
-		teams_list = Team.objects.order_by('-points', '-wins', '-sg')
-		context = {'teams_list': teams_list, 'games_list': games_list, 'current_round' : round}
-		return render(request, 'home.html', context)
-	round = get_current_round()
-	games_list = Game.objects.filter(round = round)
-	teams_list = Team.objects.order_by('-points', '-wins', '-sg')
-	context = {'teams_list': teams_list, 'games_list': games_list, 'current_round' : round}
-	return render(request, 'home.html', context)
-
-def	restart_teams(teams_list):
-	for team in teams_list:
-		team.points = 0
-		team.goals_pro = 0
-		team.goals_con = 0
-		team.wins = 0
-		team.loss = 0
-		team.draws = 0
-		team.sg = 0
-		team.games_played = 0
-		team.save()
-	
-def	restart_games(game_list):
-	for game in game_list:
-		game.home_goals = None
-		game.away_goals = None
-		game.played = False
-		game.save()
-
-def	restart(request):
-	restart_teams(Team.objects.all())
-	restart_games(Game.objects.all())
-
-def reset_simulation(request):
-	game_list = Game.objects.all()
-	if (request.method == 'POST'):
-		for game in game_list:
-			if (game.played == True and game.real_played == False):
-				reset_result(game, game.home_team, game.away_team)
-	round = get_current_round()
-	games_list = Game.objects.filter(round = round)
-	teams_list = Team.objects.order_by('-points', '-wins', '-sg')
-	context = {'teams_list': teams_list, 'games_list': games_list, 'current_round' : round}
-	return render(request, 'home.html', context)
-
-
-def next_round(request):
-	round = int(request.POST.get('current_round'))
-	games_list = Game.objects.filter(round = round + 1)
-	teams_list = Team.objects.order_by('-points', '-wins', '-sg')
-	context = {'teams_list': teams_list, 'games_list': games_list, 'current_round' : round + 1}
-	return render(request, 'home.html', context)
-
-def prev_round(request):
-	round = int(request.POST.get('current_round'))
-	games_list = Game.objects.filter(round = round - 1)
-	teams_list = Team.objects.order_by('-points', '-wins', '-sg')
-	context = {'teams_list': teams_list, 'games_list': games_list, 'current_round' : round - 1}
-	return render(request, 'home.html', context)
-
-def api_football(request):
-	if (request.method == 'POST'):
-		url = "https://api-football-v1.p.rapidapi.com/v3/fixtures"
-		querystring = {"league":"71", "season":"2024"}
-		headers = {
-			"X-RapidAPI-Key": "1b8ffa34e2mshb6c3096387b53eep1345dcjsn899e6d7dd07c",
-			"X-RapidAPI-Host": "api-football-v1.p.rapidapi.com"
-		}
-		response = requests.get(url, headers=headers, params=querystring)
-		data = response.json()
-		restart(request)
-		get_updated_games(data)
-	return(home(request))

@@ -36,7 +36,7 @@
 		</div>
 	</nav>
 	<br>
-	<h2 style="text-align: center;">Brasileiro Serie A</h2>
+	<h2 style="text-align: center;">{{ league.league_name }}</h2>
 	<br>
 	<div class="container-fluid">
 		<div class="row" style="width: 100%;">
@@ -44,8 +44,8 @@
 				<div class="table-responsive">
 					<table class="table-striped">
 						<thead>
-							<th>Tabela</th>
-							<th></th>
+							<th>Posicao</th>
+							<th>Equipe</th>
 							<th>Pontos</th>
 							<th>Jogos</th>
 							<th>Vitorias</th>
@@ -81,14 +81,16 @@
 					<form class="d-inline" method="post" action="{% url 'prev_round' %}">
 						{% csrf_token %}
 						<input type="hidden" name="current_round" value="{{ current_round }}">
+						<input type="hidden" name="league_id" value="{{ league.league_id }}">
 						<button type="submit" class="btn btn-outline-success btn-sm" {% if current_round == 1 %}disabled{% endif %}>
 							<i class="fas fa-chevron-left"></i> Anterior
 						</button>
 					</form>
-					<h6 style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">RODADA {{current_round}}</h6>
+					<h4 style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">RODADA {{current_round}}</h4>
 					<form class="d-inline" method="post" action="{% url 'next_round' %}">
 						{% csrf_token %}
 						<input type="hidden" name="current_round" value="{{ current_round }}">
+						<input type="hidden" name="league_id" value="{{ league.league_id }}">
 						<button type="submit" class="btn btn-outline-success btn-sm" {% if current_round == 38 %}disabled{% endif %}>
 							Próxima <i class="fas fa-chevron-right"></i>
 						</button>
@@ -97,7 +99,7 @@
 				<br>
 				<ul class="list-group">
 					{% for game in games_list %}
-					<form id="form_{{ game.id }}" method="post" action="{% url 'brasil_serie_a' %}">
+					<form id="form_{{ game.id }}" method="post" action="{% url league.url %}">
 					{% csrf_token %}
 					<div style="border-bottom: 1px solid rgb(84, 82, 117);">
 						<input type="hidden" name="home_team" value="{{ game.home_team.name }}">
@@ -142,6 +144,7 @@
 <div align="center">
 	<form method="post" action="{% url 'restart' %}">
 	{% csrf_token %}
+	<input type="hidden" name="league_id" value="{{ league.league_id }}">
 	<button type="submit" class="btn btn-outline-success btn-sm">
 		Restart <i class="fas fa-chevron-right"></i>
 	</button>
