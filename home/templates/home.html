@@ -9,7 +9,7 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 <style>
-/*     .table-responsive {
+    .table-responsive {
         overflow-x: auto;
     }
 
@@ -20,10 +20,11 @@
     }
     
      .left-column {
-        margin-right: 10px;
+		float: right;
     }
-*/
+
     .right-column {
+		float: right;
         margin-left: 5%;
     } 
 	.league_title {
@@ -112,16 +113,16 @@
 					{% for game in games_list %}
 					<form id="form_{{ game.id }}" method="post" action="{% url league.url %}">
 					{% csrf_token %}
-					<div style="border-bottom: 1px solid rgb(84, 82, 117);">
+					<div style="border: 1px solid gainsboro;">
 						<input type="hidden" name="home_team" value="{{ game.home_team.name }}">
 						<input type="hidden" name="away_team" value="{{ game.away_team.name }}">
 						<input type="hidden" name="game_id" value="{{ game.id }}">
-						<img src="{{ game.home_team.logo }}" alt=""  height="8%" width="8%"> <!-- {{ game.home_team.name }} -->
+						<img src="{{ game.home_team.logo }}" alt=""  height="7%" width="7%"> <!-- {{ game.home_team.name }} -->
 						<input type="number" {% if game.real_played == True %}disabled{% endif %} name="home_goals" id="home_goals_{{ game.id }}" min="0" max="9" value="{{ game.home_goals }}">	
 						X
 						<input type="number"  {% if game.real_played == True %}disabled{% endif %} name="away_goals" id="away_goals_{{ game.id }}" min="0" max="9" value="{{ game.away_goals }}">
-						<!-- {{ game.away_team.name }}  --><img src="{{ game.away_team.logo }}" alt="" height="8%" width="8%">
-						<p style="font-size: 12px;">{{ game.home_team.stadium }} - {{ game.local_time }}</p>
+						<!-- {{ game.away_team.name }}  --><img src="{{ game.away_team.logo }}" alt="" height="7%" width="7%">
+						<p style="font-size: 12px;">{{ game.home_team.stadium }}  -  {{ game.local_time }}</p>
 					</div>
 					</form>
 					<script>

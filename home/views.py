@@ -128,7 +128,7 @@ def	restart_games(game_list):
 		game.played = False
 		game.save()
 
-def	restart(request):
+def	restart():
 	restart_teams(Team.objects.all())
 	restart_games(Game.objects.all())
 
