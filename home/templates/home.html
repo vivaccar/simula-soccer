@@ -50,7 +50,7 @@
 		<h2 class="league_title">{{ league.league_name }} <img style="width: 3%;" height="3%" src="{{ league.logo }}"></h2>
 	</div>
 	<div class="container-fluid">
-		<div class="row" style="width: 100%; height: 100%;">
+		<div class="row" style="width: 100%; height: 90%;">
 			<div class="col-lg-6 left-column">
 				<br>
 				<div class="table-responsive">
@@ -72,7 +72,7 @@
 							{% for team in teams_list %}
 							<tr>
 								<td class="text-center mb-4">{{ forloop.counter }}</td>
-								<td><img src="{{ team.logo }}" alt="" width="15%" height="15%"> {{ team.name }}</td>
+								<td><img src="{{ team.logo }}" alt="" width="13%" height="13%"> {{ team.name }}</td>
 								<td class="text-center mb-4">{{ team.points }}</td>
 								<td class="text-center mb-4">{{ team.games_played }}</td>
 								<td class="text-center mb-4">{{ team.wins }}</td>
@@ -108,7 +108,7 @@
 						</button>
 					</form>
 				</div>
-				<ul class="list-group">
+				<ul style="text-align: center;" class="list-group">
 					{% for game in games_list %}
 					<form id="form_{{ game.id }}" method="post" action="{% url league.url %}">
 					{% csrf_token %}
@@ -116,11 +116,11 @@
 						<input type="hidden" name="home_team" value="{{ game.home_team.name }}">
 						<input type="hidden" name="away_team" value="{{ game.away_team.name }}">
 						<input type="hidden" name="game_id" value="{{ game.id }}">
-						<img src="{{ game.home_team.logo }}" alt=""  height="4%" width="4%"> {{ game.home_team.name }}
+						<img src="{{ game.home_team.logo }}" alt=""  height="8%" width="8%"> <!-- {{ game.home_team.name }} -->
 						<input type="number" {% if game.real_played == True %}disabled{% endif %} name="home_goals" id="home_goals_{{ game.id }}" min="0" max="9" value="{{ game.home_goals }}">	
 						X
 						<input type="number"  {% if game.real_played == True %}disabled{% endif %} name="away_goals" id="away_goals_{{ game.id }}" min="0" max="9" value="{{ game.away_goals }}">
-						{{ game.away_team.name }} <img src="{{ game.away_team.logo }}" alt="" height="4%" width="4%">
+						<!-- {{ game.away_team.name }}  --><img src="{{ game.away_team.logo }}" alt="" height="8%" width="8%">
 						<p style="font-size: 12px;">{{ game.home_team.stadium }} - {{ game.local_time }}</p>
 					</div>
 					</form>
