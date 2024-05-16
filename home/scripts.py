@@ -3,7 +3,18 @@ from math import modf
 from django.utils import timezone
 import requests
 
-def	create_teams(data):
+def	create_teams(l_id, season):
+	url = "https://api-football-v1.p.rapidapi.com/v3/teams"
+
+	querystring = {"league": l_id,"season": season}
+
+	headers = {
+		"X-RapidAPI-Key": "1b8ffa34e2mshb6c3096387b53eep1345dcjsn899e6d7dd07c",
+		"X-RapidAPI-Host": "api-football-v1.p.rapidapi.com"
+	}
+
+	response = requests.get(url, headers=headers, params=querystring)
+	data = response.json()
 	for team_data in data['response']:
 		team_infos = team_data['team']
 		venue_infos = team_data['venue']
@@ -11,10 +22,23 @@ def	create_teams(data):
 			id_name = team_infos['name'],
 			name = team_infos['name'],
 			stadium = venue_infos['name'],
-			logo = team_infos['logo']
+			logo = team_infos['logo'],
+			league_id = l_id,
+
 		)
 
-def create_games(data):
+def create_games(l_id, season, games_per_round):
+	url = "https://api-football-v1.p.rapidapi.com/v3/fixtures"
+
+	querystring = {"league": l_id,"season":season}
+
+	headers = {
+		"X-RapidAPI-Key": "1b8ffa34e2mshb6c3096387b53eep1345dcjsn899e6d7dd07c",
+		"X-RapidAPI-Host": "api-football-v1.p.rapidapi.com"
+	}
+
+	response = requests.get(url, headers=headers, params=querystring)
+	data = response.json()
 	rd = 1
 	i = 1
 	for game_data in data['response']:
@@ -23,10 +47,10 @@ def create_games(data):
 			away_team = Team.objects.get(id_name = game_data['teams']['away']['name']),
 			timestamp = game_data['fixture']['timestamp'],
 			round = rd,
-			league_id = 72
+			league_id = l_id
 		)
 		i += 1
-		if i == 11:
+		if i > games_per_round:
 			rd += 1
 			i = 1
 
@@ -58,8 +82,16 @@ def	update_table(game, home_team, away_team):
 		away_team.save()
 
 
-def	get_updated_games(data):
-	game_list = Game.objects.filter(league_id = 71)
+def	get_updated_games():
+	url = "https://api-football-v1.p.rapidapi.com/v3/fixtures"
+	querystring = {"league":"39", "season":"2023"}
+	headers = {
+		"X-RapidAPI-Key": "a915c948a2mshd5daae6b916daabp1b5891jsn54b9950682d1",
+		"X-RapidAPI-Host": "api-football-v1.p.rapidapi.com"
+	}
+	response = requests.get(url, headers=headers, params=querystring)
+	data = response.json()
+	game_list = Game.objects.filter(league_id = 39)
 	for game_data, game in zip(data['response'], game_list):
 		timestamp = game_data['fixture']['timestamp']
 		game.timestamp = timestamp
@@ -75,9 +107,11 @@ def	get_updated_games(data):
 			print(game_data['fixture']['status']['long'])
 		game.save()
 
-def	create_league(league_id):
+
+
+def	create_league(league_id, season):
 		url = "https://api-football-v1.p.rapidapi.com/v3/leagues"
-		querystring = {"id": league_id, "season": "2024"}
+		querystring = {"id": league_id, "season": season}
 		headers = {
 		"X-RapidAPI-Key": "1b8ffa34e2mshb6c3096387b53eep1345dcjsn899e6d7dd07c",
 		"X-RapidAPI-Host": "api-football-v1.p.rapidapi.com"
@@ -88,7 +122,7 @@ def	create_league(league_id):
 			league_id = data['response'][0]['league']['id'],
 			league_name = data['response'][0]['league']['name'],
 			logo = data['response'][0]['league']['logo'],
-			country = data['response'][0]['country']['name']
+			country = data['response'][0]['country']['name'],
 		)
 
 def	update_teams():
@@ -109,3 +143,4 @@ def aproveitamento(team):
 	if gained == 0:
 		return 0
 	return round((gained/disputed) * 100, 1)
+

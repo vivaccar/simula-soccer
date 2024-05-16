@@ -47,13 +47,32 @@ def reset_result(game, home_team, away_team):
 def current_timestamp():
     return int(time.time())
 
-def	get_current_round(league_id):
+def	get_current_round(id):
 	cur_timestamp = current_timestamp()
-	game_list = Game.objects.filter(league_id = league_id)
+	game_list = Game.objects.filter(league_id = id)
+	print (game_list)
 	for game in game_list:
+		if game.timestamp is None:
+			return 1
 		game_time = int(game.timestamp)
 		if game_time > cur_timestamp:
+			print (game.timestamp)
+			print (game_time)
+			print (cur_timestamp)
+			print (game)
+			print (game.round)
 			return game.round
+
+def	premier_league(request, round=1):
+	exec_game(request)
+	round = get_current_round(39)
+	league = League.objects.all()
+	games_list = Game.objects.filter(league_id = 39, round = round)
+	teams_list = Team.objects.filter(league_id = 39)
+	teams_list = teams_list.order_by('-points', '-sg', '-goals_pro')
+	context = {'league': league[2], 'teams_list': teams_list, 'games_list': games_list, 'current_round' : round}
+	return render(request, 'home.html', context)
+
 
 def brasil_serie_a(request, round=1):
 	exec_game(request)
@@ -68,6 +87,7 @@ def brasil_serie_a(request, round=1):
 def brasil_serie_b(request, round=1):
 	exec_game(request)
 	round = get_current_round(72)
+	print (round)
 	league = League.objects.all()
 	games_list = Game.objects.filter(league_id = 72, round = round)
 	teams_list = Team.objects.filter(league_id = 72)
@@ -99,17 +119,17 @@ def	restart(request):
 	restart_games(Game.objects.all())
 
 def reset_simulation(request):
-	league_id = int(request.POST.get('league_id'))
-	game_list = Game.objects.filter(league_id = league_id)
+	l_id = int(request.POST.get('league_id'))
+	game_list = Game.objects.filter(league_id = l_id)
 	if (request.method == 'POST'):
 		for game in game_list:
 			if (game.played == True and game.real_played == False):
 				reset_result(game, game.home_team, game.away_team)
-	round = get_current_round(league_id)
-	games_list = Game.objects.filter(league_id = league_id, round = round)
-	teams_list = Team.objects.filter(league_id = league_id)
+	round = get_current_round(l_id)
+	games_list = Game.objects.filter(league_id = l_id, round = round)
+	teams_list = Team.objects.filter(league_id = l_id)
 	teams_list = teams_list.order_by('-points', '-wins', '-sg')
-	league = League.objects.get(league_id = league_id)
+	league = League.objects.get(league_id = l_id)
 	context = {'teams_list': teams_list, 'games_list': games_list, 'current_round' : round, 'league': league}
 	return render(request, 'home.html', context)
 

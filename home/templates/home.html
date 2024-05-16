@@ -13,15 +13,15 @@
         overflow-x: auto;
     }
 
-/*     @media (max-width: 768px) {
+     @media (max-width: 768px) {
         .right-column {
             margin-top: 20px;
         }
     }
     
-    .left-column {
+/*     .left-column {
         margin-right: 10px;
-    }*/
+    } */
 
     .right-column {
         margin-left: 10%;
@@ -39,7 +39,7 @@
 	<h2 style="text-align: center;">{{ league.league_name }}</h2>
 	<br>
 	<div class="container-fluid">
-		<div class="row" style="width: 100%;">
+		<div class="row" style="width: 100%; height: 100%;">
 			<div class="col-lg-6 left-column">
 				<div class="table-responsive">
 					<table class="table-striped">
@@ -150,9 +150,9 @@
 	</button>
 	</form>
 </div>	
-<form method="post" action="{% url 'api' %}">
+<!-- <form method="post" action="{% url 'api' %}">
 {% csrf_token %}
 <input type="submit" value="API">
-</form>
+</form> -->
 </html>
 
