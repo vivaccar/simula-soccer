@@ -31,7 +31,8 @@
 	<nav class="navbar navbar-inverse" style="background-color: green;">
 		<div class="container-fluid">
 			<div class="navbar-header">
-				<a href="{% url 'home' %}"><h2>SimulaSoccer</h2></a>
+				{% load static %}
+				<a href="{% url 'home' %}" ><img src="{% static 'images/simulasoccer2.png' %}" alt="logo" width="30%" height="30%"></a>
 			  </div>
 		</div>
 	</nav>
