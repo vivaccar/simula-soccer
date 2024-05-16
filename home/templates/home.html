@@ -9,7 +9,7 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 <style>
-    .table-responsive {
+/*     .table-responsive {
         overflow-x: auto;
     }
 
@@ -19,13 +19,23 @@
         }
     }
     
-/*     .left-column {
+     .left-column {
         margin-right: 10px;
-    } */
-
-    .right-column {
-        margin-left: 10%;
     }
+*/
+    .right-column {
+        margin-left: 5%;
+    } 
+	.league_title {
+		text-align: center;
+		font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+		color: black;
+		font-size: 30px;
+	}
+	.table-cel {
+		width: 8%;
+		text-align: center;
+	}
 </style>
 <body>
 	<nav class="navbar navbar-inverse" style="background-color: green;">
@@ -36,25 +46,27 @@
 		</div>
 	</nav>
 	<br>
-	<h2 style="text-align: center;">{{ league.league_name }}</h2>
-	<br>
+	<div style="display: inline;">
+		<h2 class="league_title">{{ league.league_name }} <img style="width: 3%;" height="3%" src="{{ league.logo }}"></h2>
+	</div>
 	<div class="container-fluid">
 		<div class="row" style="width: 100%; height: 100%;">
 			<div class="col-lg-6 left-column">
+				<br>
 				<div class="table-responsive">
 					<table class="table-striped">
-						<thead>
-							<th>Posicao</th>
-							<th>Equipe</th>
-							<th>Pontos</th>
-							<th>Jogos</th>
-							<th>Vitorias</th>
-							<th>Empates</th>
-							<th>Derrotas</th>
-							<th>Gols</th>
-							<th>Gols sofridos</th>
-							<th>Saldo de gols</th>
-							<th>Aproveitamento</th>
+						<thead style="background-color: gainsboro;">
+							<th></th>
+							<th></th>
+							<th class="table-cel">P</th>
+							<th class="table-cel">J</th>
+							<th class="table-cel">V</th>
+							<th class="table-cel">E</th>
+							<th class="table-cel">D</th>
+							<th class="table-cel">G</th>
+							<th class="table-cel">GS</th>
+							<th class="table-cel">SG</th>
+							<th class="table-cel">%</th>
 						</thead>
 						<tbody>
 							{% for team in teams_list %}
@@ -96,7 +108,6 @@
 						</button>
 					</form>
 				</div>
-				<br>
 				<ul class="list-group">
 					{% for game in games_list %}
 					<form id="form_{{ game.id }}" method="post" action="{% url league.url %}">

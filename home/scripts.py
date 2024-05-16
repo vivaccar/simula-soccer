@@ -97,7 +97,7 @@ def	get_updated_games():
 		game.timestamp = timestamp
 		time_utc = timezone.datetime.utcfromtimestamp(timestamp)
 		local_utc = time_utc.astimezone(timezone.get_current_timezone())
-		game.local_time = local_utc
+		game.local_time = str(local_utc)[:16]
 		game.league_id = game_data['league']['id']
 		game.home_goals = game_data['goals']['home']
 		game.away_goals = game_data['goals']['away']
@@ -143,4 +143,12 @@ def aproveitamento(team):
 	if gained == 0:
 		return 0
 	return round((gained/disputed) * 100, 1)
+
+def	game_time():
+	game_list = Game.objects.all()
+	for game in game_list:
+		time_str = str(game.local_time)
+		game_time = time_str[:16]
+		game.local_time = game_time
+		game.save()
 
