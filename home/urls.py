@@ -1,4 +1,6 @@
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 from . import views
 
 urlpatterns = [
@@ -10,4 +12,4 @@ urlpatterns = [
 	path('next_round', views.next_round, name='next_round'),
 	path('prev_round', views.prev_round, name='prev_round'),
 	path('api', views.api_football, name='api'),
-]
+]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
