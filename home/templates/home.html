@@ -9,7 +9,7 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 <style>
-    .table-responsive {
+/*     .table-responsive {
         overflow-x: auto;
     }
 
@@ -19,49 +19,61 @@
         }
     }
     
-/*     .left-column {
+     .left-column {
         margin-right: 10px;
-    } */
-
-    .right-column {
-        margin-left: 10%;
     }
+*/
+    .right-column {
+        margin-left: 5%;
+    } 
+	.league_title {
+		text-align: center;
+		font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+		color: black;
+		font-size: 30px;
+	}
+	.table-cel {
+		width: 8%;
+		text-align: center;
+	}
 </style>
 <body>
-	<nav class="navbar navbar-inverse" style="background-color: green;">
+	<nav class="navbar navbar-inverse" style="background-color: rgb(168, 189, 53);">
 		<div class="container-fluid">
 			<div class="navbar-header">
 				{% load static %}
-				<a href="{% url 'home' %}" ><img src="{% static 'images/simulasoccer2.png' %}" alt="logo" width="30%" height="30%"></a>
+				<a href="{% url 'home' %}" ><img src="{% static 'images/logo.png' %}" alt="logo" width="30%" height="30%"></a>
 			  </div>
 		</div>
 	</nav>
 	<br>
-	<h2 style="text-align: center;">{{ league.league_name }}</h2>
-	<br>
+	<div style="display: inline;">
+		<h2 class="league_title">{{ league.league_name }} <img style="width: 3%;" height="3%" src="{{ league.logo }}"></h2>
+	</div>
 	<div class="container-fluid">
-		<div class="row" style="width: 100%; height: 100%;">
+		<div class="row" style="width: 100%; height: 90%;">
 			<div class="col-lg-6 left-column">
+				<br>
 				<div class="table-responsive">
 					<table class="table-striped">
-						<thead>
-							<th>Posicao</th>
-							<th>Equipe</th>
-							<th>Pontos</th>
-							<th>Jogos</th>
-							<th>Vitorias</th>
-							<th>Empates</th>
-							<th>Derrotas</th>
-							<th>Gols</th>
-							<th>Gols sofridos</th>
-							<th>Saldo de gols</th>
-							<th>Aproveitamento</th>
+						<thead style="background-color: gainsboro;">
+							<th></th>
+							<th></th>
+							<th class="table-cel">P</th>
+							<th class="table-cel">J</th>
+							<th class="table-cel">V</th>
+							<th class="table-cel">E</th>
+							<th class="table-cel">D</th>
+							<th class="table-cel">G</th>
+							<th class="table-cel">GS</th>
+							<th class="table-cel">SG</th>
+							<th class="table-cel">%</th>
 						</thead>
 						<tbody>
 							{% for team in teams_list %}
 							<tr>
-								<td class="text-center mb-4">{{ forloop.counter }}</td>
-								<td><img src="{{ team.logo }}" alt="" width="15%" height="15%"> {{ team.name }}</td>
+								<td class="text-center mb-4" {% if forloop.counter < 5 %}style="background-color: green; color:white" {% elif forloop.counter < 7 %}style="background-color: rgb(197, 165, 22); color: white" {% elif  forloop.counter > 16 %}style="background-color: red; color: white"{% endif %}>{{ forloop.counter }}</td>
+								<td><img src="{{ team.logo }}" alt="" width="13%" height="13%"> {{ team.name }}</td>
 								<td class="text-center mb-4">{{ team.points }}</td>
 								<td class="text-center mb-4">{{ team.games_played }}</td>
 								<td class="text-center mb-4">{{ team.wins }}</td>
@@ -97,8 +109,7 @@
 						</button>
 					</form>
 				</div>
-				<br>
-				<ul class="list-group">
+				<ul style="text-align: center;" class="list-group">
 					{% for game in games_list %}
 					<form id="form_{{ game.id }}" method="post" action="{% url league.url %}">
 					{% csrf_token %}
@@ -106,11 +117,11 @@
 						<input type="hidden" name="home_team" value="{{ game.home_team.name }}">
 						<input type="hidden" name="away_team" value="{{ game.away_team.name }}">
 						<input type="hidden" name="game_id" value="{{ game.id }}">
-						<img src="{{ game.home_team.logo }}" alt=""  height="4%" width="4%"> {{ game.home_team.name }}
+						<img src="{{ game.home_team.logo }}" alt=""  height="8%" width="8%"> <!-- {{ game.home_team.name }} -->
 						<input type="number" {% if game.real_played == True %}disabled{% endif %} name="home_goals" id="home_goals_{{ game.id }}" min="0" max="9" value="{{ game.home_goals }}">	
 						X
 						<input type="number"  {% if game.real_played == True %}disabled{% endif %} name="away_goals" id="away_goals_{{ game.id }}" min="0" max="9" value="{{ game.away_goals }}">
-						{{ game.away_team.name }} <img src="{{ game.away_team.logo }}" alt="" height="4%" width="4%">
+						<!-- {{ game.away_team.name }}  --><img src="{{ game.away_team.logo }}" alt="" height="8%" width="8%">
 						<p style="font-size: 12px;">{{ game.home_team.stadium }} - {{ game.local_time }}</p>
 					</div>
 					</form>

@@ -65,7 +65,12 @@ def	get_current_round(id):
 
 def	premier_league(request, round=1):
 	exec_game(request)
-	round = get_current_round(39)
+	if (request.method == "GET"):
+		round = get_current_round(39)
+	else:
+		game_id = int(request.POST.get('game_id'))
+		game_class = Game.objects.get(id = game_id)
+		round = game_class.round
 	league = League.objects.all()
 	games_list = Game.objects.filter(league_id = 39, round = round)
 	teams_list = Team.objects.filter(league_id = 39)
@@ -76,7 +81,12 @@ def	premier_league(request, round=1):
 
 def brasil_serie_a(request, round=1):
 	exec_game(request)
-	round = get_current_round(71)
+	if (request.method == "GET"):
+		round = get_current_round(71)
+	else:
+		game_id = int(request.POST.get('game_id'))
+		game_class = Game.objects.get(id = game_id)
+		round = game_class.round
 	league = League.objects.all()
 	games_list = Game.objects.filter(league_id = 71, round = round)
 	teams_list = Team.objects.filter(league_id = 71)
@@ -86,8 +96,12 @@ def brasil_serie_a(request, round=1):
 
 def brasil_serie_b(request, round=1):
 	exec_game(request)
-	round = get_current_round(72)
-	print (round)
+	if (request.method == "GET"):
+		round = get_current_round(72)
+	else:
+		game_id = int(request.POST.get('game_id'))
+		game_class = Game.objects.get(id = game_id)
+		round = game_class.round
 	league = League.objects.all()
 	games_list = Game.objects.filter(league_id = 72, round = round)
 	teams_list = Team.objects.filter(league_id = 72)
@@ -208,6 +222,6 @@ def exec_game(request):
 		home_team.aproveitamento = aproveitamento(home_team)
 		away_team.aproveitamento = aproveitamento(away_team)
 		game_class.played = True
-		game_class.save()
 		home_team.save()
 		away_team.save()
+		game_class.save()
