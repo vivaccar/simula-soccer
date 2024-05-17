@@ -24,7 +24,6 @@ def	create_teams(l_id, season):
 			stadium = venue_infos['name'],
 			logo = team_infos['logo'],
 			league_id = l_id,
-
 		)
 
 def create_games(l_id, season, games_per_round):
@@ -81,23 +80,45 @@ def	update_table(game, home_team, away_team):
 		home_team.save()
 		away_team.save()
 
+def	restart_teams(teams_list):
+	for team in teams_list:
+		team.points = 0
+		team.goals_pro = 0
+		team.goals_con = 0
+		team.wins = 0
+		team.loss = 0
+		team.draws = 0
+		team.sg = 0
+		team.games_played = 0
+		team.save()
+	
+def	restart_games(game_list):
+	for game in game_list:
+		game.home_goals = None
+		game.away_goals = None
+		game.played = False
+		game.save()
 
-def	get_updated_games():
+
+def	get_updated_games(l_id, season):
 	url = "https://api-football-v1.p.rapidapi.com/v3/fixtures"
-	querystring = {"league":"39", "season":"2023"}
+	querystring = {"league":l_id, "season":season}
 	headers = {
 		"X-RapidAPI-Key": "a915c948a2mshd5daae6b916daabp1b5891jsn54b9950682d1",
 		"X-RapidAPI-Host": "api-football-v1.p.rapidapi.com"
 	}
 	response = requests.get(url, headers=headers, params=querystring)
 	data = response.json()
-	game_list = Game.objects.filter(league_id = 39)
+	game_list = Game.objects.filter(league_id = l_id)
+	restart_teams(Team.objects.filter(league_id = l_id))
+	restart_games(game_list)
 	for game_data, game in zip(data['response'], game_list):
 		timestamp = game_data['fixture']['timestamp']
 		game.timestamp = timestamp
 		time_utc = timezone.datetime.utcfromtimestamp(timestamp)
 		local_utc = time_utc.astimezone(timezone.get_current_timezone())
 		game.local_time = str(local_utc)[:16]
+		print(game.local_time)
 		game.league_id = game_data['league']['id']
 		game.home_goals = game_data['goals']['home']
 		game.away_goals = game_data['goals']['away']
@@ -106,10 +127,9 @@ def	get_updated_games():
 			game.real_played = True
 			print(game_data['fixture']['status']['long'])
 		game.save()
+	convert_date(game_list)
 
-
-
-def	create_league(league_id, season):
+def	create_league(league_id, season, l_url):
 		url = "https://api-football-v1.p.rapidapi.com/v3/leagues"
 		querystring = {"id": league_id, "season": season}
 		headers = {
@@ -123,6 +143,7 @@ def	create_league(league_id, season):
 			league_name = data['response'][0]['league']['name'],
 			logo = data['response'][0]['league']['logo'],
 			country = data['response'][0]['country']['name'],
+			url = l_url
 		)
 
 def	update_teams():
@@ -151,4 +172,35 @@ def	game_time():
 		game_time = time_str[:16]
 		game.local_time = game_time
 		game.save()
+
+def update_zones():
+	serie = League.objects.get(league_id = 135)
+	
+	serie.zone_1 = 4
+	serie.zone_1_txt = 'Classificados à fase de grupos da UEFA Champions League'
+	serie.zone_2 = 5
+	serie.zone_2_txt = 'Classificado à UEFA Europa League'
+	serie.zone_3 = 6
+	serie.zone_3_txt = 'Classificado à fase preliminar da UEFA Europa Conference League'
+	serie.zone_reb = 18
+	serie.zone_reb_txt = 'Rebaixados à Serie B'
+
+	serie.save()
+	
+
+def convert_date(game_list):
+	for game in game_list:
+		year = game.local_time[2:4]
+		month = game.local_time[5:7]
+		day = game.local_time[8:10]
+		hour = game.local_time[11:16]
+		game.local_time = day + '/' + month + '/' + year + ' - '  + hour
+		print(game.local_time)
+		game.save()
+
+def create_and_update_league(l_id, season, games_per_round, l_url):
+	create_league(l_id, season, l_url)
+	create_teams(l_id, season)
+	create_games(l_id, season, games_per_round)
+	get_updated_games(l_id, season)
 

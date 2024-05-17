@@ -39,7 +39,7 @@
 	}
 </style>
 <body>
-	<nav class="navbar navbar-inverse" style="background-color: rgb(168, 189, 53);">
+	<nav class="navbar navbar-inverse" style="background-color: rgb(155, 219, 111);">
 		<div class="container-fluid">
 			<div class="navbar-header">
 				{% load static %}
@@ -73,7 +73,11 @@
 						<tbody>
 							{% for team in teams_list %}
 							<tr>
-								<td class="text-center mb-4" {% if forloop.counter < 5 %}style="background-color: green; color:white" {% elif forloop.counter < 7 %}style="background-color: rgb(197, 165, 22); color: white" {% elif  forloop.counter > 16 %}style="background-color: red; color: white"{% endif %}>{{ forloop.counter }}</td>
+								<td class="text-center mb-4" {% if forloop.counter <= league.zone_1 %}style="background-color: green; color:white" 
+								{% elif league.zone_2 and forloop.counter <= league.zone_2 %}style="background-color: blue; color: white" 
+								{% elif league.zone_3 and forloop.counter <= league.zone_3 %}style="background-color: rgb(199, 186, 0); color: white" 
+								{% elif forloop.counter >=  league.zone_reb %}style="background-color: red; color: white"
+								{% endif %}>{{ forloop.counter }}</td>
 								<td><img src="{{ team.logo }}" alt="" width="13%" height="13%"> {{ team.name }}</td>
 								<td class="text-center mb-4">{{ team.points }}</td>
 								<td class="text-center mb-4">{{ team.games_played }}</td>
@@ -88,6 +92,31 @@
 							{% endfor %}
 						</tbody>
 					</table>
+					<br>
+					<div class="table-responsive">
+						<table>
+							<tr>
+								<td style="background-color: green; font-size: 10px; width : 4%"> </td>
+								<td> {{ league.zone_1_txt }}</td>
+							</tr>
+							<tr>	
+								{% if league.zone_2 %}
+								<td style="background-color: blue; font-size: 10px; width : 4%"> </td>
+								<td> {{ league.zone_2_txt }}</td>
+								{% endif %}
+							</tr>
+							<tr>
+								{% if league.zone_3 %}
+								<td style="background-color: rgb(199, 186, 0); font-size: 10px; width : 4%"> </td>
+								<td> {{ league.zone_3_txt }}</td>
+								{% endif %}
+							</tr>
+							<tr>
+								<td style="background-color: red; font-size: 10px; width : 4%"> </td>
+								<td> {{ league.zone_reb_txt }}</td>
+							</tr>
+						</table>	
+					</div>
 				</div>
 			</div>
 			<div class="right-column">
@@ -114,7 +143,7 @@
 					{% for game in games_list %}
 					<form id="form_{{ game.id }}" method="post" action="{% url league.url %}">
 					{% csrf_token %}
-					<div style="border: 1px solid gainsboro;">
+					<div style="border: 1px solid gainsboro">
 						<input type="hidden" name="home_team" value="{{ game.home_team.name }}">
 						<input type="hidden" name="away_team" value="{{ game.away_team.name }}">
 						<input type="hidden" name="game_id" value="{{ game.id }}">

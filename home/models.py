@@ -30,7 +30,7 @@ class	Game(models.Model):
 	away_goals = models.IntegerField(default = None, null=True, blank=True)
 	played = models.BooleanField(default=False)
 	real_played= models.BooleanField(default=False)
-	round = models.IntegerField(default = 1)
+	round = models.IntegerField(default = 1)	
 	timestamp = models.CharField(max_length=150, null=True, default=None)
 	local_time = models.CharField(max_length=150, default=None, null=True, blank=True)
 
@@ -43,6 +43,18 @@ class	League(models.Model):
 	logo = logo = models.CharField(max_length=150, default=None)
 	country = models.CharField(max_length = 30, default=None)
 	url = models.CharField(max_length=150, null=True, blank=True, default = '')
+	zone_1 = models.IntegerField(default=None, null=True, blank=True)
+	zone_1_txt = models.CharField(max_length=150, default=None, null=True)
+	zone_2 = models.IntegerField(default=None, null=True, blank=True)
+	zone_2_txt = models.CharField(max_length=150, default=None, null=True)
+	zone_3 = models.IntegerField(default=None, null=True, blank=True)
+	zone_3_txt = models.CharField(max_length=150, default=None, null=True)
+	zone_4 = models.IntegerField(default=None, null=True, blank=True)
+	zone_4_txt = models.CharField(max_length=150, default=None, null=True)
+	zone_5 = models.IntegerField(default=None, null=True, blank=True)
+	zone_5_txt = models.CharField(max_length=150, default=None, null=True)
+	zone_reb = models.IntegerField(default=None, null=True, blank=True)
+	zone_reb_txt = models.CharField(max_length=150, default=None, null=True)
 
 	def	get_games_from_league(cls):
 		games = Game.objects.filter(league_id=cls.league_id)

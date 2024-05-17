@@ -48,20 +48,15 @@ def current_timestamp():
     return int(time.time())
 
 def	get_current_round(id):
-	cur_timestamp = current_timestamp()
+	cur_time = current_timestamp()
 	game_list = Game.objects.filter(league_id = id)
-	print (game_list)
+	cur_game_time = 0
+	cur_round = 1
 	for game in game_list:
-		if game.timestamp is None:
-			return 1
-		game_time = int(game.timestamp)
-		if game_time > cur_timestamp:
-			print (game.timestamp)
-			print (game_time)
-			print (cur_timestamp)
-			print (game)
-			print (game.round)
-			return game.round
+		if int(game.timestamp) > cur_time and (int(game.timestamp) < int(cur_game_time) or cur_game_time == 0):
+			cur_game_time = game.timestamp
+			cur_round = game.round
+	return(cur_round)
 
 def	premier_league(request, round=1):
 	exec_game(request)
@@ -78,6 +73,50 @@ def	premier_league(request, round=1):
 	context = {'league': league[2], 'teams_list': teams_list, 'games_list': games_list, 'current_round' : round}
 	return render(request, 'home.html', context)
 
+def	la_liga(request, round=1):
+	exec_game(request)
+	if (request.method == "GET"):
+		round = get_current_round(140)
+	else:
+		game_id = int(request.POST.get('game_id'))
+		game_class = Game.objects.get(id = game_id)
+		round = game_class.round
+	league = League.objects.all()
+	games_list = Game.objects.filter(league_id = 140, round = round)
+	teams_list = Team.objects.filter(league_id = 140)
+	teams_list = teams_list.order_by('-points', '-sg', '-goals_pro')
+	context = {'league': league[3], 'teams_list': teams_list, 'games_list': games_list, 'current_round' : round}
+	return render(request, 'home.html', context)
+
+def	serie_a(request, round=1):
+	exec_game(request)
+	if (request.method == "GET"):
+		round = get_current_round(135)
+	else:
+		game_id = int(request.POST.get('game_id'))
+		game_class = Game.objects.get(id = game_id)
+		round = game_class.round
+	league = League.objects.all()
+	games_list = Game.objects.filter(league_id = 135, round = round)
+	teams_list = Team.objects.filter(league_id = 135)
+	teams_list = teams_list.order_by('-points', '-sg', '-goals_pro')
+	context = {'league': league[5], 'teams_list': teams_list, 'games_list': games_list, 'current_round' : round}
+	return render(request, 'home.html', context)
+
+def	bundesliga(request, round=1):
+	exec_game(request)
+	if (request.method == "GET"):
+		round = get_current_round(78)
+	else:
+		game_id = int(request.POST.get('game_id'))
+		game_class = Game.objects.get(id = game_id)
+		round = game_class.round
+	league = League.objects.all()
+	games_list = Game.objects.filter(league_id = 78, round = round)
+	teams_list = Team.objects.filter(league_id = 78)
+	teams_list = teams_list.order_by('-points', '-sg', '-goals_pro')
+	context = {'league': league[4], 'teams_list': teams_list, 'games_list': games_list, 'current_round' : round}
+	return render(request, 'home.html', context)
 
 def brasil_serie_a(request, round=1):
 	exec_game(request)
