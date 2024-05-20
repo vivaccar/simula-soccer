@@ -1,4 +1,5 @@
 from django.db import models
+from json import dumps
 
 # Create your models here.
 
@@ -21,6 +22,8 @@ class	Team(models.Model):
 	def __str__(self):
 		return self.name
 	
+	def to_json(self):
+		return dumps(self.dict)
 
 class	Game(models.Model):
 	league_id = models.IntegerField(default=None, null=True, blank=True)
