@@ -224,11 +224,20 @@
 </body>
 <div align="center">
 	<form method="post" action="{% url 'restart' %}">
-	{% csrf_token %}
-	<input type="hidden" name="league_id" value="{{ league.league_id }}">
-	<button type="submit" class="btn btn-outline-success btn-sm">
-		Restart <i class="fas fa-chevron-right"></i>
-	</button>
+		{% csrf_token %}
+		<input type="hidden" name="league_id" value="{{ league.league_id }}">
+		<button type="submit" id ="restart" class="btn btn-outline-success btn-sm">
+			Restart <i class="fas fa-chevron-right"></i>
+		</button>
+		<script>
+			document.addEventListener('DOMContentLoaded', function(){
+				var restartButton = document.getElementById('restart');
+
+				restartButton.addEventListener('click', function(){
+					localStorage.removeItem('data')
+				})
+			})
+		</script>
 	</form>
 </div>	
 <script>
