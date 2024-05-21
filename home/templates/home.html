@@ -48,140 +48,179 @@
 		</div>
 	</nav>
 	<br>
-	<div style="display: inline;">
-		<h2 class="league_title">{{ league.league_name }} <img style="width: 3%;" height="3%" src="{{ league.logo }}"></h2>
-	</div>
-	<div class="container-fluid">
-		<div class="row" style="width: 100%; height: 90%;">
-			<div class="col-lg-6 left-column">
-				<br>
-				<div class="table-responsive">
-					<table class="table-striped">
-						<thead style="background-color: gainsboro;">
-							<th></th>
-							<th></th>
-							<th class="table-cel">P</th>
-							<th class="table-cel">J</th>
-							<th class="table-cel">V</th>
-							<th class="table-cel">E</th>
-							<th class="table-cel">D</th>
-							<th class="table-cel">G</th>
-							<th class="table-cel">GS</th>
-							<th class="table-cel">SG</th>
-							<th class="table-cel">%</th>
-						</thead>
-						<tbody>
-							{% for team in teams_list %}
-							<tr>
-								<td class="text-center mb-4" {% if forloop.counter <= league.zone_1 %}style="background-color: green; color:white" 
-								{% elif league.zone_2 and forloop.counter <= league.zone_2 %}style="background-color: blue; color: white" 
-								{% elif league.zone_3 and forloop.counter <= league.zone_3 %}style="background-color: rgb(199, 186, 0); color: white" 
-								{% elif forloop.counter >=  league.zone_reb %}style="background-color: red; color: white"
-								{% endif %}>{{ forloop.counter }}</td>
-								<td><img src="{{ team.logo }}" alt="" width="13%" height="13%"> {{ team.name }}</td>
-								<td class="text-center mb-4">{{ team.points }}</td>
-								<td class="text-center mb-4">{{ team.games_played }}</td>
-								<td class="text-center mb-4">{{ team.wins }}</td>
-								<td class="text-center mb-4">{{ team.draws }}</td>
-								<td class="text-center mb-4">{{ team.loss }}</td>
-								<td class="text-center mb-4">{{ team.goals_pro }}</td>
-								<td class="text-center mb-4">{{ team.goals_con }}</td>
-								<td class="text-center mb-4">{{ team.sg }}</td>
-								<td class="text-center mb-4">{{ team.aproveitamento }}%</td>
-							</tr>
-							{% endfor %}
-						</tbody>
-					</table>
+		<div style="display: inline;">
+			<h2 class="league_title">{{ league.league_name }} <img style="width: 3%;" height="3%" src="{{ league.logo }}"></h2>
+		</div>
+		<div class="container-fluid">
+			<div class="row" style="width: 100%; height: 90%;">
+				<div class="col-lg-6 left-column">
 					<br>
 					<div class="table-responsive">
-						<table>
-							<tr>
-								<td style="background-color: green; font-size: 10px; width : 4%"> </td>
-								<td> {{ league.zone_1_txt }}</td>
-							</tr>
-							<tr>	
-								{% if league.zone_2 %}
-								<td style="background-color: blue; font-size: 10px; width : 4%"> </td>
-								<td> {{ league.zone_2_txt }}</td>
-								{% endif %}
-							</tr>
-							<tr>
-								{% if league.zone_3 %}
-								<td style="background-color: rgb(199, 186, 0); font-size: 10px; width : 4%"> </td>
-								<td> {{ league.zone_3_txt }}</td>
-								{% endif %}
-							</tr>
-							<tr>
-								<td style="background-color: red; font-size: 10px; width : 4%"> </td>
-								<td> {{ league.zone_reb_txt }}</td>
-							</tr>
-						</table>	
+						<table class="table-striped">
+							<thead style="background-color: gainsboro;">
+								<th></th>
+								<th></th>
+								<th class="table-cel">P</th>
+								<th class="table-cel">J</th>
+								<th class="table-cel">V</th>
+								<th class="table-cel">E</th>
+								<th class="table-cel">D</th>
+								<th class="table-cel">G</th>
+								<th class="table-cel">GS</th>
+								<th class="table-cel">SG</th>
+								<th class="table-cel">%</th>
+							</thead>
+							<tbody>
+								{% for team in teams_list %}
+								<tr id="team_row_{{ team.id_name }}">
+									<td class="text-center mb-4" {% if forloop.counter <= league.zone_1 %}style="background-color: green; color:white" 
+									{% elif league.zone_2 and forloop.counter <= league.zone_2 %}style="background-color: blue; color: white" 
+									{% elif league.zone_3 and forloop.counter <= league.zone_3 %}style="background-color: rgb(199, 186, 0); color: white" 
+									{% elif forloop.counter >=  league.zone_reb %}style="background-color: red; color: white"
+									{% endif %}>{{ forloop.counter }}</td>
+									<td><img src="{{ team.logo }}" alt="" width="13%" height="13%"> {{ team.name }}</td>
+									<td class="text-center mb-4">{{ team.points }}</td>
+									<td class="text-center mb-4">{{ team.games_played }}</td>
+									<td class="text-center mb-4">{{ team.wins }}</td>
+									<td class="text-center mb-4">{{ team.draws }}</td>
+									<td class="text-center mb-4">{{ team.loss }}</td>
+									<td class="text-center mb-4">{{ team.goals_pro }}</td>
+									<td class="text-center mb-4">{{ team.goals_con }}</td>
+									<td class="text-center mb-4">{{ team.sg }}</td>
+									<td class="text-center mb-4">{{ team.aproveitamento }}%</td>
+								</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+						<br>
+						<div class="table-responsive">
+							<table>
+								<tr>
+									<td style="background-color: green; font-size: 10px; width : 4%"> </td>
+									<td> {{ league.zone_1_txt }}</td>
+								</tr>
+								<tr>	
+									{% if league.zone_2 %}
+									<td style="background-color: blue; font-size: 10px; width : 4%"> </td>
+									<td> {{ league.zone_2_txt }}</td>
+									{% endif %}
+								</tr>
+								<tr>
+									{% if league.zone_3 %}
+									<td style="background-color: rgb(199, 186, 0); font-size: 10px; width : 4%"> </td>
+									<td> {{ league.zone_3_txt }}</td>
+									{% endif %}
+								</tr>
+								<tr>
+									<td style="background-color: red; font-size: 10px; width : 4%"> </td>
+									<td> {{ league.zone_reb_txt }}</td>
+								</tr>
+							</table>	
+						</div>
 					</div>
 				</div>
-			</div>
-			<div class="right-column">
-	            <div class="d-flex justify-content-between align-items-center mt-4">
-					<form class="d-inline" method="post" action="{% url 'prev_round' %}">
-						{% csrf_token %}
-						<input type="hidden" name="current_round" value="{{ current_round }}">
-						<input type="hidden" name="league_id" value="{{ league.league_id }}">
-						<button type="submit" class="btn btn-outline-success btn-sm" {% if current_round == 1 %}disabled{% endif %}>
-							<i class="fas fa-chevron-left"></i> Anterior
-						</button>
-					</form>
-					<h4 style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">RODADA {{current_round}}</h4>
-					<form class="d-inline" method="post" action="{% url 'next_round' %}">
-						{% csrf_token %}
-						<input type="hidden" name="current_round" value="{{ current_round }}">
-						<input type="hidden" name="league_id" value="{{ league.league_id }}">
-						<button type="submit" class="btn btn-outline-success btn-sm" {% if current_round == 38 %}disabled{% endif %}>
-							Próxima <i class="fas fa-chevron-right"></i>
-						</button>
-					</form>
-				</div>
-				<ul style="text-align: center;" class="list-group">
-					{% for game in games_list %}
-					<form id="form_{{ game.id }}" method="post" action="{% url league.url %}">
-					{% csrf_token %}
-					<div style="border: 1px solid gainsboro">
-						<input type="hidden" name="home_team" value="{{ game.home_team.name }}">
-						<input type="hidden" name="away_team" value="{{ game.away_team.name }}">
-						<input type="hidden" name="game_id" value="{{ game.id }}">
-						<img src="{{ game.home_team.logo }}" alt=""  height="7%" width="7%"> <!-- {{ game.home_team.name }} -->
-						<input type="number" {% if game.real_played == True %}disabled{% endif %} name="home_goals" id="home_goals_{{ game.id }}" min="0" max="9" value="{{ game.home_goals }}">	
-						X
-						<input type="number"  {% if game.real_played == True %}disabled{% endif %} name="away_goals" id="away_goals_{{ game.id }}" min="0" max="9" value="{{ game.away_goals }}">
-						<!-- {{ game.away_team.name }}  --><img src="{{ game.away_team.logo }}" alt="" height="7%" width="7%">
-						<p style="font-size: 12px;">{{ game.home_team.stadium }}  -  {{ game.local_time }}</p>
+				<div class="right-column">
+					<div class="d-flex justify-content-between align-items-center mt-4">
+						<form class="d-inline" method="post" action="{% url 'prev_round' %}">
+							{% csrf_token %}
+							<input type="hidden" name="current_round" value="{{ current_round }}">
+							<input type="hidden" name="league_id" value="{{ league.league_id }}">
+							<button type="submit" class="btn btn-outline-success btn-sm" {% if current_round == 1 %}disabled{% endif %}>
+								<i class="fas fa-chevron-left"></i> Anterior
+							</button>
+						</form>
+						<h4 style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">RODADA {{current_round}}</h4>
+						<form class="d-inline" method="post" action="{% url 'next_round' %}">
+							{% csrf_token %}
+							<input type="hidden" name="current_round" value="{{ current_round }}">
+							<input type="hidden" name="league_id" value="{{ league.league_id }}">
+							<button type="submit" class="btn btn-outline-success btn-sm" {% if current_round == 38 %}disabled{% endif %}>
+								Próxima <i class="fas fa-chevron-right"></i>
+							</button>
+						</form>
 					</div>
-					</form>
-					<script>
-						document.addEventListener('DOMContentLoaded', function() {
-							var homeGoalsInput = document.getElementById('home_goals_{{ game.id }}');
-							var awayGoalsInput = document.getElementById('away_goals_{{ game.id }}');
-							var form = document.getElementById('form_{{ game.id }}');
-			
-							homeGoalsInput.addEventListener('input', function() {
-								checkInputs();
-							});
-			
-							awayGoalsInput.addEventListener('input', function() {
-								checkInputs();
-							});
-			
-							function checkInputs() {
-								if (homeGoalsInput.value !== '' && awayGoalsInput.value !== '') {
-									form.submit();
+					<ul style="text-align: center;" class="list-group">
+						{% for game in games_list %}
+						<form id="form_{{ game.id }}" method="post" action="{% url league.url %}">
+						{% csrf_token %}
+						<div style="border: 1px solid gainsboro">
+							<input type="hidden" name="home_team" value="{{ game.home_team.name }}">
+							<input type="hidden" name="away_team" value="{{ game.away_team.name }}">
+							<input type="hidden" name="game_id" value="{{ game.id }}">
+							<img src="{{ game.home_team.logo }}" alt=""  height="7%" width="7%">
+							<input type="number" {% if game.real_played == True %}disabled{% endif %} name="home_goals" id="home_goals_{{ game.id }}" min="0" max="9" value="{{ game.home_goals }}">	
+							X
+							<input type="number"  {% if game.real_played == True %}disabled{% endif %} name="away_goals" id="away_goals_{{ game.id }}" min="0" max="9" value="{{ game.away_goals }}">
+							<img src="{{ game.away_team.logo }}" alt="" height="7%" width="7%">
+							<p style="font-size: 12px;">{{ game.home_team.stadium }}  -  {{ game.local_time }}</p>
+						</div>
+						</form>
+						<script>
+							document.addEventListener('DOMContentLoaded', function() {
+								var homeGoalsInput = document.getElementById('home_goals_{{ game.id }}');
+								var awayGoalsInput = document.getElementById('away_goals_{{ game.id }}');
+								var form = document.getElementById('form_{{ game.id }}');
+							
+								homeGoalsInput.addEventListener('input', function() {
+									checkInputs();
+								});
+							
+								awayGoalsInput.addEventListener('input', function() {
+									checkInputs();
+								});
+							
+								function checkInputs() {
+									if (homeGoalsInput.value !== '' && awayGoalsInput.value !== '') {
+										var formData = new FormData(form);
+							
+										fetch("{% url league.url %}", {
+											method: 'POST',
+											body: formData,
+											headers: {
+												'X-Requested-With': 'XMLHttpRequest',
+												'X-CSRFToken': form.querySelector('input[name="csrfmiddlewaretoken"]').value,
+											},
+										})
+										.then(response => response.json())
+										.then(data => {
+											console.log(data);
+												
+											const tbody = document.querySelector('tbody');
+											tbody.innerHTML = '';
+							
+											data.forEach((team, index) => {
+												const row = document.createElement('tr');
+												row.id = `team_row_${team.id_name}`;
+						
+												const rankCell = document.createElement('td');
+												rankCell.className = 'text-center mb-4';
+												rankCell.textContent = index + 1;	
+												row.innerHTML = `
+													<td class="text-center mb-4">${index + 1}</td>
+													<td><img src="${team.logo}" alt="" width="13%" height="13%"> ${team.id_name}</td>
+													<td class="text-center mb-4">${team.points}</td>
+													<td class="text-center mb-4">${team.games}</td>
+													<td class="text-center mb-4">${team.wins}</td>
+													<td class="text-center mb-4">${team.draws}</td>
+													<td class="text-center mb-4">${team.loss}</td>
+													<td class="text-center mb-4">${team.goals_pro}</td>
+													<td class="text-center mb-4">${team.goals_con}</td>
+													<td class="text-center mb-4">${team.sg}</td>
+													<td class="text-center mb-4">${team.aproveitamento}%</td>
+												`;
+											tbody.appendChild(row);
+											});
+										});
+									}
 								}
-							}
-						});
-					</script>
-					{% endfor %}
-				</ul>
+							});
+							</script>
+						{% endfor %}
+					</ul>
+				</div>
 			</div>
 		</div>
-	</div>
-	<br>
+		<br>
 </body>
 <div align="center">
 	<form method="post" action="{% url 'restart' %}">
@@ -192,9 +231,20 @@
 	</button>
 	</form>
 </div>	
-<!-- <form method="post" action="{% url 'api' %}">
-{% csrf_token %}
-<input type="submit" value="API">
-</form> -->
+<script>
+	document.addEventListener('DOMContentLoaded', (event) => {
+		getGeneralData()
+	})
+	function getGeneralData() {
+		const l_id = league.league_id
+		fetch ('get_data')
+			.then(response => response.json())
+			.then(data => {
+				console.log(data)
+				const teamsListJson = JSON.stringify(data);
+				localStorage.setItem('teamsList', teamsListJson);
+			})
+	}	
+</script>
 </html>
 
