@@ -16,9 +16,10 @@ def	home(request):
 	return render(request, 'index.html', context)
 
 def	get_data(request):
-	l_id = int(request.POST.get('league_id'))
-	league = League.objects.get(league_id=71)
-	teamslist = Team.objects.filter(league_id=71)
+	id_liga = int(request.POST.get('league_id'))
+	print (id_liga)
+	league = League.objects.get(league_id=id_liga)
+	teamslist = Team.objects.filter(league_id=id_liga)
 	teams_list = teamslist.order_by('-points', '-wins', '-sg')
 	data = {
 		'league_data': {
@@ -46,7 +47,7 @@ def	get_data(request):
 		data['teams'].append({
 			'id_name': team.id_name,
 			'name': team.name,
-			'poinst': team.points,
+			'points': team.points,
 			'wins': team.wins,
 			'draws': team.draws,
 			'loss': team.loss,
@@ -54,7 +55,7 @@ def	get_data(request):
 			'goals_con': team.goals_con,
 			'aproveitamento': team.aproveitamento,
 			'sg': team.sg,
-			'logo': team.stadium,
+			'logo': team.logo,
 			'stadium': team.stadium,
 			'games_played': team.games_played,
 		})

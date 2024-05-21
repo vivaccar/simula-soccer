@@ -15,5 +15,5 @@ urlpatterns = [
 	path('next_round', views.next_round, name='next_round'),
 	path('prev_round', views.prev_round, name='prev_round'),
 	path('api', views.api_football, name='api'),
-	path('get_data', views.get_data, name='get_data')
+	path('get_data', views.get_data, name='get_data'),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

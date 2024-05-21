@@ -239,13 +239,26 @@
 			})
 		</script>
 	</form>
-</div>	
+</div>
+<meta name="csrf-token" content="{{ csrf_token }}">
 <script>
+	const l_id = '{{ league.league_id }}'
 	document.addEventListener('DOMContentLoaded', (event) => {
 		getGeneralData()
 	})
+	function getCSRFToken() {
+    return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+	}
 	function getGeneralData() {
-		fetch ('get_data')
+		console.log(l_id)
+		fetch('get_data', {
+       		method: 'POST',
+			headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': getCSRFToken(),
+       		},
+        	body: new URLSearchParams({ 'league_id': l_id }).toString(),
+    	})
 			.then(response => response.json())
 			.then(data => {
 				console.log(data)
