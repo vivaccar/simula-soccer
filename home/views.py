@@ -5,6 +5,8 @@ from .models import Team, Game, League
 from .forms import Game_forms
 from .scripts import create_games, create_teams, get_updated_games, aproveitamento, create_league, update_teams, update_games, league_to_json
 import requests, time
+from django.http import JsonResponse
+import json
 import json
 	
 # Create your views here.
@@ -13,6 +15,51 @@ def	home(request):
 	leagues_list = League.objects.all()
 	context = {"leagues_list": leagues_list}
 	return render(request, 'index.html', context)
+
+def	get_data(request):
+	l_id = int(request.POST.get('league_id'))
+	league = League.objects.get(league_id=71)
+	teamslist = Team.objects.filter(league_id=71)
+	teams_list = teamslist.order_by('-points', '-wins', '-sg')
+	data = {
+		'league_data': {
+			'league_id': league.league_id,
+			'name': league.league_name,
+			'logo': league.logo,
+			'country': league.country,
+			'url': league.url,
+			'zone_1': league.zone_1,
+			'zone_1_txt': league.zone_1_txt,
+			'zone_2': league.zone_2,
+			'zone_2_txt': league.zone_2_txt,
+			'zone_3': league.zone_3,
+			'zone_3_txt': league.zone_3_txt,
+			'zone_4': league.zone_4_txt,
+			'zone_4_txt': league.zone_4_txt,
+			'zone_5': league.zone_5,
+			'zone_5_txt': league.zone_5_txt,
+			'zone_reb': league.zone_reb,
+			'zone_reb_txt': league.zone_reb_txt,
+		},
+		'teams': []
+	}
+	for team in teams_list:
+		data['teams'].append({
+			'id_name': team.id_name,
+			'name': team.name,
+			'poinst': team.points,
+			'wins': team.wins,
+			'draws': team.draws,
+			'loss': team.loss,
+			'gols_pro': team.goals_pro,
+			'goals_con': team.goals_con,
+			'aproveitamento': team.aproveitamento,
+			'sg': team.sg,
+			'logo': team.stadium,
+			'stadium': team.stadium,
+			'games_played': team.games_played,
+		})
+	return (JsonResponse(data, safe=False))
 
 def reset_result(game, home_team, away_team):
 	home_team.games_played -= 1
@@ -119,6 +166,7 @@ def	bundesliga(request, round=1):
 	context = {'league': league[4], 'teams_list': teams_list, 'games_list': games_list, 'current_round' : round}
 	return render(request, 'home.html', context)
 
+
 def brasil_serie_a(request, round=1):
 	data = league_to_json(71)
 	data_json = json.dumps(data)
@@ -130,7 +178,7 @@ def brasil_serie_a(request, round=1):
 		game_id = int(request.POST.get('game_id'))
 		game_class = Game.objects.get(id = game_id)
 		round = game_class.round
-	league = League.objects.all()
+	league = League.objects.filter(league_id = 71)
 	games_list = Game.objects.filter(league_id = 71, round = round)
 	teams_list = Team.objects.filter(league_id = 71)
 	teams_list = teams_list.order_by('-points', '-wins', '-sg')
@@ -138,19 +186,35 @@ def brasil_serie_a(request, round=1):
 	return render(request, 'home.html', context)
 
 def brasil_serie_b(request, round=1):
-	exec_game(request)
 	if (request.method == "GET"):
 		round = get_current_round(72)
+		league = League.objects.all()
+		games_list = Game.objects.filter(league_id = 72, round = round)
+		teams_list = Team.objects.filter(league_id = 72)
+		teams_list = teams_list.order_by('-points', '-wins', '-sg')
+		context = {'league': league[1], 'teams_list': teams_list, 'games_list': games_list, 'current_round' : round}
+		return render(request, 'home.html', context)
 	else:
-		game_id = int(request.POST.get('game_id'))
-		game_class = Game.objects.get(id = game_id)
-		round = game_class.round
-	league = League.objects.all()
-	games_list = Game.objects.filter(league_id = 72, round = round)
-	teams_list = Team.objects.filter(league_id = 72)
-	teams_list = teams_list.order_by('-points', '-wins', '-sg')
-	context = {'league': league[1], 'teams_list': teams_list, 'games_list': games_list, 'current_round' : round}
-	return render(request, 'home.html', context)
+		exec_game(request)
+		teams_list = Team.objects.filter(league_id = 72)
+		teams_list = teams_list.order_by('-points', '-wins', '-sg')
+		data = []
+		for team in teams_list:
+			data.append({
+				'id_name':team.name,
+				'games': team.games_played,
+				'logo': team.logo,
+				'points': team.points,
+				'wins': team.wins,
+				'draws': team.draws,
+				'loss': team.loss,
+				'goals_pro': team.goals_pro,
+				'goals_con': team.goals_con,
+				'sg': team.sg,
+				'aproveitamento': team.aproveitamento,
+			})
+		return JsonResponse(data, safe=False)
+
 
 def	restart_teams(teams_list):
 	for team in teams_list:
