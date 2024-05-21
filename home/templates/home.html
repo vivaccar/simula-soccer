@@ -179,15 +179,12 @@
 									}
 									data.push(game);
 									localStorage.setItem('data', JSON.stringify(data));
-									updateTable()
+									var data_json = document.getElementById('{{ data_json }}')
+									
 									form.submit();
 								}
 							}
 						})
-							var teamJSON = document.getElementsByName('home_team');
-							
-							print(t)
-							var t = JSON.stringify(team)
 					</script>
 					</form>
 					{% endfor %}
