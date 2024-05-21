@@ -204,3 +204,24 @@ def create_and_update_league(l_id, season, games_per_round, l_url):
 	create_games(l_id, season, games_per_round)
 	get_updated_games(l_id, season)
 
+def league_to_json(l_id):
+	teams_list = Team.objects.filter(league_id = l_id)
+	teams_json = []
+	for team in teams_list:
+		teams_json.append( {
+			'id_name': team.id_name, 
+			'name': team.name,
+			'league_id': team.league_id,
+			'stadium': team.stadium,
+			'logo': team.logo,
+			'points': team.points,
+			'goals_pro': team.goals_pro,
+			'goals_con': team.goals_con,
+			'wins': team.wins,
+			'draws': team.draws,
+			'loss': team.loss,
+			'sg' : team.sg,
+			'aproveitamento': team.aproveitamento,
+			'games_played': team.games_played
+			})
+	return(teams_json)

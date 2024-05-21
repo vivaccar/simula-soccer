@@ -3,9 +3,10 @@ from django.http import HttpResponse
 from django.template import loader
 from .models import Team, Game, League
 from .forms import Game_forms
-from .scripts import create_games, create_teams, get_updated_games, aproveitamento, create_league, update_teams, update_games
+from .scripts import create_games, create_teams, get_updated_games, aproveitamento, create_league, update_teams, update_games, league_to_json
 import requests, time
 from django.http import JsonResponse
+import json
 import json
 	
 # Create your views here.
@@ -168,6 +169,9 @@ def	bundesliga(request, round=1):
 
 
 def brasil_serie_a(request, round=1):
+	data = league_to_json(71)
+	data_json = json.dumps(data)
+	print(data_json)
 	exec_game(request)
 	if (request.method == "GET"):
 		round = get_current_round(71)
@@ -179,7 +183,7 @@ def brasil_serie_a(request, round=1):
 	games_list = Game.objects.filter(league_id = 71, round = round)
 	teams_list = Team.objects.filter(league_id = 71)
 	teams_list = teams_list.order_by('-points', '-wins', '-sg')
-	context = {'league': league[0], 'teams_list': teams_list, 'games_list': games_list, 'current_round' : round}
+	context = {'league': league[0], 'teams_list': teams_list, 'games_list': games_list, 'current_round' : round, 'data_json': data_json}
 	return render(request, 'home.html', context)
 
 def brasil_serie_b(request, round=1):
