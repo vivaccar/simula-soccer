@@ -180,7 +180,7 @@ def brasil_serie_a(request, round=1):
 	games_list = Game.objects.filter(league_id = 71, round = round)
 	teams_list = Team.objects.filter(league_id = 71)
 	teams_list = teams_list.order_by('-points', '-wins', '-sg')
-	context = {'league': league[0], 'teams_list': teams_list, 'games_list': games_list, 'current_round' : round, 'data_json': data_json}
+	context = {'league': league[0], 'teams_list': teams_list, 'games_list': games_list, 'current_round' : round}
 	return render(request, 'home.html', context)
 
 def brasil_serie_b(request, round=1):
