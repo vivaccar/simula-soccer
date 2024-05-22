@@ -141,7 +141,7 @@
 					</div>
 					<ul style="text-align: center;" class="list-group">
 						{% for game in games_list %}
-						<form id="form_{{ game.id }}" method="post" action="{% url league.url %}">
+						<form id="form_{{ game.id }}">
 						{% csrf_token %}
 						<div style="border: 1px solid gainsboro">
 							<input type="hidden" name="home_team" value="{{ game.home_team.name }}">
@@ -174,30 +174,78 @@
 								function exec_game(game, generaldata) {
 									var home_team = game['home_team'];
 									var away_team = game['away_team'];
-									generaldata[home_team]['goals_pro'] += parseInt(game['home_goals']);
-									generaldata[home_team]['goals_con'] += parseInt(game['away_goals']);
-									generaldata[away_team]['goals_pro'] += parseInt(game['away_goals']);
-									generaldata[away_team]['goals_con'] += parseInt(game['home_goals']);
-									generaldata[home_team]['games_played'] += 1;
-									generaldata[away_team]['games_played'] += 1;
-									generaldata[home_team]['sg'] += parseInt(game['home_goals']) - parseInt(game['away_goals']);
-									generaldata[away_team]['sg'] += parseInt(game['away_goals']) - parseInt(game['home_goals']);
+									var home_team_data = generaldata['teams'].find(team => team.name === home_team);
+									var away_team_data = generaldata['teams'].find(team => team.name === away_team);
+									console.log(home_team_data);
+									console.log(away_team_data);
+									home_team_data.gols_pro += parseInt(game['home_goals']);
+									home_team_data.goals_con += parseInt(game['away_goals']);
+									home_team_data.sg += parseInt(game['home_goals']) - parseInt(game['away_goals']);
+									home_team_data.games_played += 1;
+									away_team_data.gols_pro += parseInt(game['away_goals']);
+									away_team_data.goals_con += parseInt(game['home_goals']);
+									away_team_data.sg += parseInt(game['away_goals']) - parseInt(game['home_goals']);
+									away_team_data.games_played += 1;
 									if (parseInt(game['home_goals']) > parseInt(game['away_goals'])) {
-										generaldata[home_team]['points'] += 3;
-										generaldata[home_team]['wins'] += 1;
-										generaldata[away_team]['loss'] += 1;
+										home_team_data.points += 3;
+										home_team_data.wins += 1;
+										away_team_data.loss += 1;
 									} else if (parseInt(game['home_goals']) == parseInt(game['away_goals'])) {
-										generaldata[home_team]['draws'] += 1;
-										generaldata[away_team]['draws'] += 1;
-										generaldata[home_team]['points'] += 1;
-										generaldata[away_team]['points'] += 1;
+										home_team_data.draws += 1;
+										away_team_data.draws += 1;
+										home_team_data.points += 1;
+										away_team_data.points += 1;
 									} else {
-										generaldata[away_team]['points'] += 3;
-										generaldata[away_team]['wins'] += 1;
-										generaldata[home_team]['loss'] += 1;
+										away_team_data.points += 3;
+										away_team_data.wins += 1;
+										home_team_data.loss += 1;
 									}
+									home_team_data.aproveitamento = ((home_team_data.points / (home_team_data.games_played * 3)) * 100).toFixed(1);
+									away_team_data.aproveitamento = ((away_team_data.points / (away_team_data.games_played * 3)) * 100).toFixed(1);
+									generaldata['teams'].sort((a, b) => b.points - a.points);
+									localStorage.setItem('teamsList', JSON.stringify(generaldata));
 								}
 
+								function update_table() {
+									var generaldata = JSON.parse(localStorage.getItem('teamsList'));
+									const tbody = document.querySelector('tbody')
+									tbody.innerHTML = ''
+									generaldata['teams'].forEach((team, index) => {
+										const row = document.createElement('tr');
+										row.id = `team_row_${team.id_name}`;
+										let backgroundColor = '';
+										let textColor = 'black';
+
+										if (index + 1 <= generaldata['league_data']['zone_1']) {
+											backgroundColor = 'green';
+											textColor = 'white';
+										} else if (generaldata['league_data']['zone_2'] && index + 1 <= generaldata['league_data']['zone_2']) {
+											backgroundColor = 'blue';
+											textColor = 'white';
+										} else if (generaldata['league_data']['zone_3'] && index + 1 <= generaldata['league_data']['zone_3']) {
+											backgroundColor = 'rgb(199, 186, 0)';
+											textColor = 'white'
+										} else if (index + 1 >= generaldata['league_data']['zone_reb']) {
+											backgroundColor = 'red';
+											textColor = 'white'
+										}
+										row.innerHTML = `	
+											<td class="text-center mb-4" style="background-color: ${backgroundColor}; color: ${textColor};">${index + 1}</td>
+											<td><img src="${team.logo}" alt="" width="13%" height="13%"> ${team.id_name}</td>
+											<td class="text-center mb-4">${team.points}</td>
+											<td class="text-center mb-4">${team.games_played}</td>
+											<td class="text-center mb-4">${team.wins}</td>
+											<td class="text-center mb-4">${team.draws}</td>
+											<td class="text-center mb-4">${team.loss}</td>
+											<td class="text-center mb-4">${team.gols_pro}</td>
+											<td class="text-center mb-4">${team.goals_con}</td>
+											<td class="text-center mb-4">${team.sg}</td>
+											<td class="text-center mb-4">${team.aproveitamento}%</td>
+											`;
+										tbody.appendChild(row);
+									})
+								}
+								
 								function checkInputs() {
 									if (homeGoalsInput.value !== '' && awayGoalsInput.value !== '') {
 										var game = {
@@ -210,42 +258,9 @@
 										data.push(game);
 										localStorage.setItem('data', JSON.stringify(data));
 										const formData = new FormData(form);
-										console.log(homeGoalsInput.value);
 										var generaldata = JSON.parse(localStorage.getItem('teamsList'));
 										exec_game(game, generaldata);
-										localStorage.setItem('teamsList', JSON.stringify(generaldata));
-										fetch("{% url league.url %}", {
-											method: 'POST',
-											body: formData,
-											headers: {
-												'X-Requested-With': 'XMLHttpRequest',
-												'X-CSRFToken': form.querySelector('input[name="csrfmiddlewaretoken"]').value,
-											},
-										})
-										.then(response => response.json())
-										.then(data => {
-											const tbody = document.querySelector('tbody');
-											tbody.innerHTML = '';
-											data.forEach((team, index) => {
-												const row = document.createElement('tr');
-												row.id = `team_row_${team.id_name}`;
-												row.innerHTML = `
-												<td class="text-center mb-4">${index + 1}</td>
-												<td><img src="${team.logo}" alt="" width="13%" height="13%"> ${team.id_name}</td>
-												<td class="text-center mb-4">${team.points}</td>
-												<td class="text-center mb-4">${team.games}</td>
-												<td class="text-center mb-4">${team.wins}</td>
-												<td class="text-center mb-4">${team.draws}</td>
-												<td class="text-center mb-4">${team.loss}</td>
-												<td class="text-center mb-4">${team.goals_pro}</td>
-												<td class="text-center mb-4">${team.goals_con}</td>
-												<td class="text-center mb-4">${team.sg}</td>
-												<td class="text-center mb-4">${team.aproveitamento}%</td>
-												`;
-												tbody.appendChild(row);
-											});
-										})
-										.catch(error => console.error('Error:', error));
+										update_table();
 									}
 								}
 							});							

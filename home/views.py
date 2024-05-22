@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.template import loader
 from .models import Team, Game, League
 from .forms import Game_forms
-from .scripts import create_games, create_teams, get_updated_games, aproveitamento, create_league, update_teams, update_games, league_to_json
+from .scripts import create_games, create_teams, get_updated_games, aproveitamento, create_league, update_teams, update_games
 import requests, time
 from django.http import JsonResponse
 import json
@@ -169,9 +169,6 @@ def	bundesliga(request, round=1):
 
 
 def brasil_serie_a(request, round=1):
-	data = league_to_json(71)
-	data_json = json.dumps(data)
-	print(data_json)
 	exec_game(request)
 	if (request.method == "GET"):
 		round = get_current_round(71)
