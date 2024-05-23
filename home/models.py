@@ -31,7 +31,7 @@ class	Game(models.Model):
 	away_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='away_team')
 	home_goals = models.IntegerField(default = None, null=True, blank=True)
 	away_goals = models.IntegerField(default = None, null=True, blank=True)
-	played = models.BooleanField(default=False)
+	simulated = models.BooleanField(default=False)
 	real_played= models.BooleanField(default=False)
 	round = models.IntegerField(default = 1)	
 	timestamp = models.CharField(max_length=150, null=True, default=None)

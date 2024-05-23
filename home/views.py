@@ -21,6 +21,7 @@ def	get_data(request):
 	print (id_liga)
 	league = League.objects.get(league_id=id_liga)
 	teamslist = Team.objects.filter(league_id=id_liga)
+	gameslist = Game.objects.filter(league_id=id_liga)
 	teams_list = teamslist.order_by('-points', '-wins', '-sg')
 	data = {
 		'league_data': {
@@ -42,7 +43,8 @@ def	get_data(request):
 			'zone_reb': league.zone_reb,
 			'zone_reb_txt': league.zone_reb_txt,
 		},
-		'teams': []
+		'teams': [],
+		'games': []
 	}
 	for team in teams_list:
 		data['teams'].append({
@@ -59,7 +61,21 @@ def	get_data(request):
 			'logo': team.logo,
 			'stadium': team.stadium,
 			'games_played': team.games_played,
-		})
+	})
+	for game in gameslist:
+		data['games'].append({
+			'league_id' : game.league_id,
+			'game_id': game.id,
+			'home_team': game.home_team.name,
+			'away_team': game.away_team.name,
+			'home_goals': game.home_goals,
+			'away_goals': game.away_goals,
+			'simulated': game.simulated,
+			'real_played': game.real_played,
+			'round': game.round,
+			'timestamp': game.timestamp,
+			'local_time': game.local_time,
+	})
 	return (JsonResponse(data, safe=False))
 
 def reset_result(game, home_team, away_team):
@@ -242,7 +258,7 @@ def reset_simulation(request):
 	game_list = Game.objects.filter(league_id = l_id)
 	if (request.method == 'POST'):
 		for game in game_list:
-			if (game.played == True and game.real_played == False):
+			if (game.simulated == True and game.real_played == False):
 				reset_result(game, game.home_team, game.away_team)
 	round = get_current_round(l_id)
 	games_list = Game.objects.filter(league_id = l_id, round = round)
@@ -298,7 +314,7 @@ def exec_game(request):
 		home_team = Team.objects.get(name=home_team_name)
 		away_team = Team.objects.get(name=away_team_name)
 		game_class = Game.objects.get(id = game_id)
-		if game_class.played == True:
+		if game_class.simulated == True:
 			reset_result(game_class, home_team, away_team)
 		round = game_class.round
 		home_team.games_played += 1
@@ -326,7 +342,7 @@ def exec_game(request):
 			away_team.points += 3
 		home_team.aproveitamento = aproveitamento(home_team)
 		away_team.aproveitamento = aproveitamento(away_team)
-		game_class.played = True
+		game_class.simulated = True
 		home_team.save()
 		away_team.save()
 		game_class.save()

@@ -171,11 +171,12 @@
 									checkInputs();
 								});
 
-								function exec_game(game, generaldata) {
+								function exec_game(game, teamsList) {
+									
 									var home_team = game['home_team'];
 									var away_team = game['away_team'];
-									var home_team_data = generaldata['teams'].find(team => team.name === home_team);
-									var away_team_data = generaldata['teams'].find(team => team.name === away_team);
+									var home_team_data = teamsList['teams'].find(team => team.name === home_team);
+									var away_team_data = teamsList['teams'].find(team => team.name === away_team);
 									console.log(home_team_data);
 									console.log(away_team_data);
 									home_team_data.gols_pro += parseInt(game['home_goals']);
@@ -202,8 +203,8 @@
 									}
 									home_team_data.aproveitamento = ((home_team_data.points / (home_team_data.games_played * 3)) * 100).toFixed(1);
 									away_team_data.aproveitamento = ((away_team_data.points / (away_team_data.games_played * 3)) * 100).toFixed(1);
-									generaldata['teams'].sort((a, b) => b.points - a.points);
-									localStorage.setItem('teamsList', JSON.stringify(generaldata));
+									teamsList['teams'].sort((a, b) => b.points - a.points);
+									localStorage.setItem('teamsList', JSON.stringify(teamsList));
 								}
 
 								function update_table() {
@@ -255,15 +256,28 @@
 											'away_team': '{{ game.away_team.name }}',
 											'away_goals': awayGoalsInput.value
 										};
-										data.push(game);
+										let GameIdToFind = game['game_id']
+										console.log("gameIdToFind: ", GameIdToFind)
+										if (data !== null){
+											var foundIndex = data.findIndex(object => object['game_id'] == GameIdToFind)
+											console.log("found index: ", foundIndex)
+											if (foundIndex !== -1){
+												console.log("aqui")
+												//reset_result
+												data.splice(foundIndex, 1)
+												localStorage.setItem('data', JSON.stringify(data))
+											}
+										}
+										data.push(game)	
 										localStorage.setItem('data', JSON.stringify(data));
-										const formData = new FormData(form);
 										var generaldata = JSON.parse(localStorage.getItem('teamsList'));
 										exec_game(game, generaldata);
 										update_table();
 									}
-								}
-							});							
+									}
+									}
+								
+							);							
 							</script>
 						{% endfor %}
 					</ul>
