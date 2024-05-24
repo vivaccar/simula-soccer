@@ -54,7 +54,7 @@ def	get_data(request):
 			'wins': team.wins,
 			'draws': team.draws,
 			'loss': team.loss,
-			'gols_pro': team.goals_pro,
+			'goals_pro': team.goals_pro,
 			'goals_con': team.goals_con,
 			'aproveitamento': team.aproveitamento,
 			'sg': team.sg,
