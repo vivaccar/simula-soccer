@@ -176,6 +176,7 @@
 									var away_team = game['away_team'];
 									var home_team_data = teamsList['teams'].find(team => team.name === home_team);
 									var away_team_data = teamsList['teams'].find(team => team.name === away_team);
+									console.log("antes de exec game")
 									console.log(home_team_data);
 									console.log(away_team_data);
 									home_team_data.goals_pro += parseInt(game['home_goals']);
@@ -204,6 +205,9 @@
 									home_team_data.aproveitamento = ((home_team_data.points / (home_team_data.games_played * 3)) * 100).toFixed(1);
 									away_team_data.aproveitamento = ((away_team_data.points / (away_team_data.games_played * 3)) * 100).toFixed(1);
 									teamsList['teams'].sort((a, b) => b.points - a.points);
+									console.log("depois de exec game");
+									console.log(away_team_data);
+									console.log(home_team_data);
 									localStorage.setItem('teamsList', JSON.stringify(teamsList));
 								}
 
@@ -281,6 +285,7 @@
 								
 								function checkInputs() {
 									if (homeGoalsInput.value !== '' && awayGoalsInput.value !== '') {
+										console.log("passou na check_inputs")
 										var game = {
 											'game_id': '{{ game.id }}',
 											'home_team': '{{ game.home_team.name }}',
