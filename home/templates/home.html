@@ -47,6 +47,71 @@
 			  </div>
 		</div>
 	</nav>
+	<script>
+		function resetTeamsVariables(game){
+			var teams_list = JSON.parse(localStorage.getItem('teamsList'))
+			let home_team = teams_list['teams'].find(team => team.name == game['home_team'])
+			let away_team = teams_list['teams'].find(team => team.name == game['away_team'])
+			home_team.games_played -= 1
+			away_team.games_played -= 1
+			home_team.goals_pro -= parseInt(game['home_goals'])
+			home_team.goals_con -= parseInt(game['away_goals'])
+			home_team.sg -= parseInt(game['home_goals']) - parseInt(game['away_goals'])
+			away_team.goals_pro -= parseInt(game['away_goals'])
+			away_team.goals_con -= parseInt(game['home_goals'])
+			away_team.sg -= parseInt(game['away_goals']) - parseInt(game['home_goals'])
+			if (parseInt(game['home_goals']) > parseInt(game['away_goals'])){
+				home_team.points -= 3
+				home_team.wins -= 1
+				away_team.loss -= 1
+			}
+			if (parseInt(game['home_goals']) == parseInt(game['away_goals'])){
+				home_team.points -= 1
+				away_team.points -= 1
+				home_team.draws -= 1
+				away_team.draws -= 1
+			}
+			if (parseInt(game['away_goals']) > parseInt(game['home_goals'])){
+				away_team.points -= 3
+				away_team.wins -= 1
+				home_team.loss -= 1
+			}
+			game['simulated'] = false
+			localStorage.setItem('teamsList', JSON.stringify(teams_list));
+		}
+		const l_id = '{{ league.league_id }}'
+		document.addEventListener('DOMContentLoaded', (event) => {
+			getGeneralData()
+		})
+		function getCSRFToken() {
+		return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+		}
+		function getGeneralData() {
+			console.log(l_id)
+			fetch('get_data', {
+				   method: 'POST',
+				headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+				'X-CSRFToken': getCSRFToken(),
+				   },
+				body: new URLSearchParams({ 'league_id': l_id }).toString(),
+			})
+				.then(response => response.json())
+				.then(data => {
+					console.log('received data:', data)
+					const results = JSON.parse(localStorage.getItem('results'));
+					console.log('results:', results)
+					if (results)
+						results.forEach((game, index) => {
+							resetTeamsVariables(game)
+						})
+					localStorage.removeItem('results')
+					const teamsListJson = JSON.stringify(data);
+					console.log('teams list json:', teamsListJson)
+					localStorage.setItem('teamsList', teamsListJson);
+				})
+		}	
+	</script>
 	<br>
 		<div style="display: inline;">
 			<h2 class="league_title">{{ league.league_name }} <img style="width: 3%;" height="3%" src="{{ league.logo }}"></h2>
@@ -141,6 +206,10 @@
 					</div>
 					<ul style="text-align: center;" class="list-group">
 						{% for game in games_list %}
+<!-- 						<script>
+							var games = JSON.parse(getItem('teamsList'))
+							console.log(games)
+						</script> -->
 						<form id="form_{{ game.id }}">
 						{% csrf_token %}
 						<div style="border: 1px solid gainsboro">
@@ -156,7 +225,7 @@
 						</div>
 						</form>
 						<script>
-							var data = JSON.parse(localStorage.getItem('results')) || [];
+							var data = [];
 
 							document.addEventListener('DOMContentLoaded', function() {
 								var homeGoalsInput = document.getElementById('home_goals_{{ game.id }}');
@@ -176,6 +245,7 @@
 									var away_team = game['away_team'];
 									var home_team_data = teamsList['teams'].find(team => team.name === home_team);
 									var away_team_data = teamsList['teams'].find(team => team.name === away_team);
+									game['simulated'] = true
 									console.log(home_team_data);
 									console.log(away_team_data);
 									home_team_data.goals_pro += parseInt(game['home_goals']);
@@ -200,7 +270,6 @@
 										away_team_data.wins += 1;
 										home_team_data.loss += 1;
 									}
-									game['simulated'] = true
 									home_team_data.aproveitamento = ((home_team_data.points / (home_team_data.games_played * 3)) * 100).toFixed(1);
 									away_team_data.aproveitamento = ((away_team_data.points / (away_team_data.games_played * 3)) * 100).toFixed(1);
 									teamsList['teams'].sort((a, b) => b.points - a.points);
@@ -292,6 +361,7 @@
 										};
 										let GameIdToFind = game['game_id']
 										console.log("gameIdToFind: ", GameIdToFind)
+										console.log('data antes:', data)
 										if (data !== null){
 											var foundIndex = data.findIndex(object => object['game_id'] == GameIdToFind)
 											console.log("found index: ", foundIndex)
@@ -300,13 +370,16 @@
 												resetTeamsVariables(data[foundIndex])
 												console.log("jogo que sera excluido:", data[foundIndex])
 												data.splice(foundIndex, 1)
+												console.log("jogo que sera excluido:", data[foundIndex])
 												localStorage.setItem('results', JSON.stringify(data))
 											}
 										}
 										data.push(game)	
-										localStorage.setItem('results', JSON.stringify(data));
+										console.log('data depois:', data)
 										var generaldata = JSON.parse(localStorage.getItem('teamsList'));
+										console.log('teams list: ', generaldata)
 										exec_game(game, generaldata);
+										localStorage.setItem('results', JSON.stringify(data));
 										print_table();
 									}
 									}
@@ -339,67 +412,5 @@
 	</form>
 </div>
 <meta name="csrf-token" content="{{ csrf_token }}">
-<script>
-	function resetTeamsVariables(game){
-		var teams_list = JSON.parse(localStorage.getItem('teamsList'))
-		let home_team = teams_list['teams'].find(team => team.name == game['home_team'])
-		let away_team = teams_list['teams'].find(team => team.name == game['away_team'])
-		home_team.games_played -= 1
-		away_team.games_played -= 1
-		home_team.goals_pro -= parseInt(game['home_goals'])
-		home_team.goals_con -= parseInt(game['away_goals'])
-		home_team.sg -= parseInt(game['home_goals']) - parseInt(game['away_goals'])
-		away_team.goals_pro -= parseInt(game['away_goals'])
-		away_team.goals_con -= parseInt(game['home_goals'])
-		away_team.sg -= parseInt(game['away_goals']) - parseInt(game['home_goals'])
-		if (parseInt(game['home_goals']) > parseInt(game['away_goals'])){
-			home_team.points -= 3
-			home_team.wins -= 1
-			away_team.loss -= 1
-		}
-		if (parseInt(game['home_goals']) == parseInt(game['away_goals'])){
-			home_team.points -= 1
-			away_team.points -= 1
-			home_team.draws -= 1
-			away_team.draws -= 1
-		}
-		if (parseInt(game['away_goals']) > parseInt(game['home_goals'])){
-			away_team.points -= 3
-			away_team.wins -= 1
-			home_team.loss -= 1
-		}
-		game['simulated'] = false
-		localStorage.setItem('teamsList', JSON.stringify(teams_list));
-	}
-	const l_id = '{{ league.league_id }}'
-	document.addEventListener('DOMContentLoaded', (event) => {
-		getGeneralData()
-	})
-	function getCSRFToken() {
-    return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-	}
-	function getGeneralData() {
-		console.log(l_id)
-		fetch('get_data', {
-       		method: 'POST',
-			headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-CSRFToken': getCSRFToken(),
-       		},
-        	body: new URLSearchParams({ 'league_id': l_id }).toString(),
-    	})
-			.then(response => response.json())
-			.then(data => {
-				console.log(data)
-				const results = JSON.parse(localStorage.getItem('results'));
-				/* results.forEach((game, index) => {
-					resetTeamsVariables(game)
-				}) */
-				localStorage.removeItem('results')
-				const teamsListJson = JSON.stringify(data);
-				localStorage.setItem('teamsList', teamsListJson);
-			})
-	}	
-</script>
 </html>
 
