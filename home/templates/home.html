@@ -48,6 +48,21 @@
 		</div>
 	</nav>
 	<script>
+		function getCurrentRound(){
+			let currentTime = Date.now() / 1000 //transormo de milissegundos para segundos(unidade de medida dos timestamps dos games)
+			var allGames = JSON.parse(localStorage.getItem('teamsList'))['games']
+			var curGameTime = 0
+			var curRound = 1
+			allGames.forEach((game, index) => {
+				if ((game.timestamp) > currentTime  && ((game.timestamp) < curGameTime || curGameTime == 0)){
+					curGameTime = game.timestamp
+					curRound = game.round
+			}})
+			return (curRound)
+		}
+		window.Round = getCurrentRound();
+	</script>
+	<script>
 		function resetTeamsVariables(game){
 			var teams_list = JSON.parse(localStorage.getItem('teamsList'))
 			let home_team = teams_list['teams'].find(team => team.name == game['home_team'])
@@ -81,6 +96,7 @@
 		}
 		const l_id = '{{ league.league_id }}'
 		document.addEventListener('DOMContentLoaded', (event) => {
+			updateRound()
 			getGeneralData()
 		})
 		function getCSRFToken() {
@@ -186,6 +202,8 @@
 				<div class="right-column">
 					<div class="d-flex justify-content-between align-items-center mt-4">
 						<script>
+							var data = [];
+
 							function printRound(round){
 								console.log("entrou na print round")
 								document.getElementById("gamesContainer")
@@ -213,67 +231,56 @@
 									</div>
 									</form>`
 									document.getElementById("gamesContainer").innerHTML += formHTML
-								
-								})}
-								document.addEventListener('DOMContentLoaded', function(){
-									printRound(parseInt('{{current_round}}'))})
-							</script>
-							<form class="d-inline">
-							{% csrf_token %}
-							<button id ="prev_round" type="button" class="btn btn-outline-success btn-sm">
-								<i class="fas fa-chevron-left"></i> Anterior
-							</button>
-							<script>
-								var currentRound = '{{ current_round }}'
-								console.log("current round", currentRound)
-													
-								document.addEventListener('DOMContentLoaded', function(){
-									var prevRoundtButton = document.getElementById('prev_round');
 									
-									prevRoundtButton.addEventListener('click', function(){
-										printRound(parseInt(currentRound) - 1)
-									})
-								})
-							</script>
-						</form>
-						<h4 style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">RODADA {{current_round}}</h4>
-						<form class="d-inline">
-							{% csrf_token %}
-							<button id = "next_round" type ="button" class="btn btn-outline-success btn-sm">
-								Próxima <i class="fas fa-chevron-right"></i>
-							</button>
-							<script>
-								var currentRound = '{{ current_round }}'
-								console.log("current round", currentRound)
-
-								document.addEventListener('DOMContentLoaded', function(){
-									var nextRoundtButton = document.getElementById('next_round');
+									document.addEventListener('DOMContentLoaded', function() {
+										var homeGoalsInput = document.getElementById('home_goals_${game.id}');
+										var awayGoalsInput = document.getElementById('away_goals_${game.id}');
 									
-									nextRoundtButton.addEventListener('click', function(){
-										printRound(parseInt(currentRound) + 1)
-									})
-								})
-							</script>
-						</form>
-					</div>
-					<div id="gamesContainer">
+										homeGoalsInput.addEventListener('input', function() {
+											checkInputs();
+										});
+									
+										awayGoalsInput.addEventListener('input', function() {
+											checkInputs();
+										});
+										function checkInputs() {
+										if (homeGoalsInput.value !== '' && awayGoalsInput.value !== '') {
+											console.log("passou na check_inputs")
+											var game = {
+												'game_id': '{{ game.id }}',
+												'home_team': '{{ game.home_team.name }}',
+												'home_goals': homeGoalsInput.value,
+												'away_team': '{{ game.away_team.name }}',
+												'away_goals': awayGoalsInput.value,
+												'simulated' : '{{ game.simulated }}',
+												'real_played': '{{ game.real_played }}'
+											};
+											let GameIdToFind = game['game_id']
+											console.log("gameIdToFind: ", GameIdToFind)
+											console.log('data antes:', data)
+											if (data !== null){
+												var foundIndex = data.findIndex(object => object['game_id'] == GameIdToFind)
+												console.log("found index: ", foundIndex)
+												if (foundIndex !== -1){
+													console.log("aqui")
+													resetTeamsVariables(data[foundIndex])
+													console.log("jogo que sera excluido:", data[foundIndex])
+													data.splice(foundIndex, 1)
+													console.log("jogo que sera excluido:", data[foundIndex])
+													localStorage.setItem('results', JSON.stringify(data))
+												}
+											}
+											data.push(game)	
+											console.log('data depois:', data)
+											var generaldata = JSON.parse(localStorage.getItem('teamsList'));
+											console.log('teams list: ', generaldata)
+											exec_game(game, generaldata);
+											localStorage.setItem('results', JSON.stringify(data));
+											print_table();
+										}
+										}
+									})});
 						
-							<script>
-								var data = [];
-
-								document.addEventListener('DOMContentLoaded', function() {
-									var homeGoalsInput = document.getElementById('home_goals_{{game.id}}');
-									var awayGoalsInput = document.getElementById('away_goals_{{game.id}}');
-									var form = document.getElementById('form_{{game.id}}');
-
-									homeGoalsInput.addEventListener('input', function() {
-										checkInputs();
-									});
-
-									awayGoalsInput.addEventListener('input', function() {
-										checkInputs();
-									});
-
 									function exec_game(game, teamsList) {
 										var home_team = game['home_team'];
 										var away_team = game['away_team'];
@@ -312,7 +319,7 @@
 										console.log(home_team_data);
 										localStorage.setItem('teamsList', JSON.stringify(teamsList));
 									}
-
+								
 									function print_table() {
 										var generaldata = JSON.parse(localStorage.getItem('teamsList'));
 										const tbody = document.querySelector('tbody')
@@ -322,7 +329,7 @@
 											row.id = `team_row_${team.id_name}`;
 											let backgroundColor = '';
 											let textColor = 'black';
-
+								
 											if (index + 1 <= generaldata['league_data']['zone_1']) {
 												backgroundColor = 'green';
 												textColor = 'white';
@@ -385,48 +392,55 @@
 										localStorage.setItem('teamsList', JSON.stringify(teams_list));
 								}
 								
-									function checkInputs() {
-										if (homeGoalsInput.value !== '' && awayGoalsInput.value !== '') {
-											console.log("passou na check_inputs")
-											var game = {
-												'game_id': '{{ game.id }}',
-												'home_team': '{{ game.home_team.name }}',
-												'home_goals': homeGoalsInput.value,
-												'away_team': '{{ game.away_team.name }}',
-												'away_goals': awayGoalsInput.value,
-												'simulated' : '{{ game.simulated }}',
-												'real_played': '{{ game.real_played }}'
-											};
-											let GameIdToFind = game['game_id']
-											console.log("gameIdToFind: ", GameIdToFind)
-											console.log('data antes:', data)
-											if (data !== null){
-												var foundIndex = data.findIndex(object => object['game_id'] == GameIdToFind)
-												console.log("found index: ", foundIndex)
-												if (foundIndex !== -1){
-													console.log("aqui")
-													resetTeamsVariables(data[foundIndex])
-													console.log("jogo que sera excluido:", data[foundIndex])
-													data.splice(foundIndex, 1)
-													console.log("jogo que sera excluido:", data[foundIndex])
-													localStorage.setItem('results', JSON.stringify(data))
-												}
-											}
-											data.push(game)	
-											console.log('data depois:', data)
-											var generaldata = JSON.parse(localStorage.getItem('teamsList'));
-											console.log('teams list: ', generaldata)
-											exec_game(game, generaldata);
-											localStorage.setItem('results', JSON.stringify(data));
-											print_table();
+									
 										}
-										}
-										}
-								);							
-								</script>
-						</ul>
+								document.addEventListener('DOMContentLoaded', function(){
+									printRound(window.Round)})
+									
+
+							</script>
+							<form class="d-inline">	
+							{% csrf_token %}
+							<button id ="prev_round" type="button" class="btn btn-outline-success btn-sm">
+								<i class="fas fa-chevron-left"></i> Anterior
+							</button>
+							<script>
+								function updateRound(){
+									let roundHTML = `<h4 style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">RODADA ${window.Round}</h4>`
+									document.getElementById('round_container').innerHTML = roundHTML
+								}
+
+								document.addEventListener('DOMContentLoaded', function(){
+									var prevRoundtButton = document.getElementById('prev_round');
+									
+									prevRoundtButton.addEventListener('click', function(){
+										window.Round -= 1
+										updateRound()
+										printRound(window.Round)
+									})
+								})
+							</script>
+						</form>
+						<div id="round_container"></div>
+						<form class="d-inline">
+							{% csrf_token %}
+							<button id = "next_round" type ="button" class="btn btn-outline-success btn-sm">
+								Próxima <i class="fas fa-chevron-right"></i>
+							</button>
+							<script>
+								document.addEventListener('DOMContentLoaded', function(){
+									var nextRoundtButton = document.getElementById('next_round');
+									
+									nextRoundtButton.addEventListener('click', function(){
+										window.Round += 1
+										updateRound()
+										printRound(window.Round)
+									})
+								})
+							</script>
+						</form>
 					</div>
-				</div>
+						<div id="gamesContainer"></div>
 			</div>
 		</div>
 		<br>
