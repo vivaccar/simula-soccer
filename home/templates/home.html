@@ -96,36 +96,37 @@
 		}
 		const l_id = '{{ league.league_id }}'
 		document.addEventListener('DOMContentLoaded', (event) => {
-			updateRound()
 			getGeneralData()
 		})
 		function getCSRFToken() {
-		return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+			return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 		}
 		function getGeneralData() {
 			console.log(l_id)
 			fetch('get_data', {
-				   method: 'POST',
+				method: 'POST',
 				headers: {
-				'Content-Type': 'application/x-www-form-urlencoded',
-				'X-CSRFToken': getCSRFToken(),
-				   },
+					'Content-Type': 'application/x-www-form-urlencoded',
+					'X-CSRFToken': getCSRFToken(),
+				},
 				body: new URLSearchParams({ 'league_id': l_id }).toString(),
 			})
-				.then(response => response.json())
-				.then(data => {
-					console.log('received data:', data)
-					const results = JSON.parse(localStorage.getItem('results'));
-					console.log('results:', results)
-					if (results)
-						results.forEach((game, index) => {
-							resetTeamsVariables(game)
-						})
-					localStorage.removeItem('results')
-					const teamsListJson = JSON.stringify(data);
-					localStorage.setItem('teamsList', teamsListJson);
+			.then(response => response.json())
+			.then(data => {
+				console.log('received data:', data)
+				const results = JSON.parse(localStorage.getItem('results'));
+				console.log('results:', results)
+				if (results)
+				results.forEach((game, index) => {
+					resetTeamsVariables(game)
 				})
-		}	
+			localStorage.removeItem('results')
+			const teamsListJson = JSON.stringify(data);
+			localStorage.setItem('teamsList', teamsListJson);
+			printRound()
+			printGamesRound(window.Round)
+	})
+}	
 	</script>
 	<br>
 		<div style="display: inline;">
@@ -204,7 +205,7 @@
 						<script>
 							var data = [];
 
-							function printRound(round){
+							function printGamesRound(round){
 								console.log("entrou na print round")
 								document.getElementById("gamesContainer")
 								var allGames = JSON.parse(localStorage.getItem('teamsList'))['games']
@@ -394,8 +395,8 @@
 								
 									
 										}
-								document.addEventListener('DOMContentLoaded', function(){
-									printRound(window.Round)})
+								/* document.addEventListener('DOMContentLoaded', function(){
+									printGamesRound(window.Round)}) */
 									
 
 							</script>
@@ -405,7 +406,7 @@
 								<i class="fas fa-chevron-left"></i> Anterior
 							</button>
 							<script>
-								function updateRound(){
+								function printRound(){
 									let roundHTML = `<h4 style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">RODADA ${window.Round}</h4>`
 									document.getElementById('round_container').innerHTML = roundHTML
 								}
@@ -415,8 +416,8 @@
 									
 									prevRoundtButton.addEventListener('click', function(){
 										window.Round -= 1
-										updateRound()
-										printRound(window.Round)
+										printRound()
+										printGamesRound(window.Round)
 									})
 								})
 							</script>
@@ -433,8 +434,8 @@
 									
 									nextRoundtButton.addEventListener('click', function(){
 										window.Round += 1
-										updateRound()
-										printRound(window.Round)
+										printRound()
+										printGamesRound(window.Round)
 									})
 								})
 							</script>
