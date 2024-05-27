@@ -203,86 +203,88 @@
 						<script>
 							var data = [];
 
-							function printGamesRound(round){
-								console.log("entrou na print round")
-								document.getElementById("gamesContainer")
-								var allGames = JSON.parse(localStorage.getItem('teamsList'))['games']
-								console.log("all games: ", allGames)
-								var allTeams = JSON.parse(localStorage.getItem('teamsList'))['teams']
-								var gamesRound =  allGames.filter((games) => games['round'] == round)
-								console.log("games round:", gamesRound)
-								document.getElementById("gamesContainer").innerHTML = ``
+							function printGamesRound(round) {
+								console.log("entrou na print round");
+								var gamesContainer = document.getElementById("gamesContainer");
+								var allGames = JSON.parse(localStorage.getItem('teamsList'))['games'];
+								console.log("all games: ", allGames);
+								var allTeams = JSON.parse(localStorage.getItem('teamsList'))['teams'];
+								var gamesRound = allGames.filter((game) => game['round'] == round);
+								console.log("games round:", gamesRound);
+								
+								gamesContainer.innerHTML = '';
 								gamesRound.forEach((game, index) => {
-									var home_team = allTeams.find((team => team.name == game.home_team))
-									var away_team = allTeams.find((team => team.name == game.away_team))
+									var home_team = allTeams.find((team => team.name == game.home_team));
+									var away_team = allTeams.find((team => team.name == game.away_team));
 									var formHTML = `
-									<form id="form_${game.id}">
-									<div style="border: 1px solid gainsboro">
-									<input type="hidden" name="home_team" value="${game.home_team}">
-									<input type="hidden" name="away_team" value="${game.away_team}">
-									<input type="hidden" name="game_id" value="${game.id}">
-									<img src="${home_team.logo}" alt=""  height="7%" width="7%">
-									<input type="number" ${game.real_played ? 'disabled' : ''} name="home_goals" id="home_goals_${game.id}" min="0" max="9" value="${game.home_goals != null ? game.home_goals : ''}">	
-									X
-									<input type="number"  ${game.real_played ? 'disabled' : ''} name="away_goals" id="away_goals_${game.id}" min="0" max="9" value="${game.away_goals != null ? game.away_goals : ''}">
-									<img src="${away_team.logo}" alt="" height="7%" width="7%">
-									<p style="font-size: 12px;">${home_team.stadium}  -  ${game.local_time}</p>
-									</div>
-									</form>`
-									document.getElementById("gamesContainer").innerHTML += formHTML
-								})}
-								document.addEventListener('input', function() {
-									var allGames = JSON.parse(localStorage.getItem('teamsList'))['games']
-									var gamesRound =  allGames.filter((games) => games['round'] == window.Round)
-									console.log("TODOS OS JOGOS DA RODADA", gamesRound)
-									gamesRound.forEach((game, index) => {
-										var homeGoalsInput = document.getElementById(`home_goals_${game.id}`);
-										var awayGoalsInput = document.getElementById(`away_goals_${game.id}`);
-										
-										homeGoalsInput.addEventListener('input', function() {
-											checkInputs();
-										});
-										
-										awayGoalsInput.addEventListener('input', function() {
-											checkInputs();
-										});
-										function checkInputs() {
-											console.log("passou na check_inputs")
-											if (homeGoalsInput.value !== '' && awayGoalsInput.value !== '') {
-											var newGame = {
-												'game_id': `${game.game_id}`,
-												'home_team': `${game.home_team}`,
-												'home_goals': homeGoalsInput.value,
-												'away_team': `${game.away_team}`,
-												'away_goals': awayGoalsInput.value,
-												'simulated' : `${game.simulated}`,
-												'real_played': `${game.real_played}`
-											};
-											let GameIdToFind = game['game_id']
-											console.log("gameIdToFind: ", GameIdToFind)
-											console.log('data antes:', data)
-											if (data !== null){
-												var foundIndex = data.findIndex(object => object['game_id'] == GameIdToFind)
-												console.log("found index: ", foundIndex)
-												if (foundIndex !== -1){
-													console.log("aqui")
-													resetTeamsVariables(data[foundIndex])
-													console.log("jogo que sera excluido:", data[foundIndex])
-													data.splice(foundIndex, 1)
-													console.log("jogo que sera excluido:", data[foundIndex])
-													localStorage.setItem('results', JSON.stringify(data))
-												}
-											}
-											data.push(newGame)	
-											console.log('data depois:', data)
-											var generaldata = JSON.parse(localStorage.getItem('teamsList'));
-											console.log('teams list: ', generaldata)
-											exec_game(newGame, generaldata);
-											localStorage.setItem('results', JSON.stringify(data));
-											print_table();
-										}
-										}
-										})});
+									<form id="form_${game.game_id}">
+										<div style="border: 1px solid gainsboro; display: flex; flex-direction: column; align-items: center; text-align: center;">
+											<div style="border: 1px solid gainsboro">
+												<input type="hidden" name="home_team" value="${game.home_team}">
+												<input type="hidden" name="away_team" value="${game.away_team}">
+												<input type="hidden" name="game_id" value="${game.game_id}">
+												<img src="${home_team.logo}" alt="" height="7%" width="7%">
+												<input type="number" ${game.real_played ? 'disabled' : ''} name="home_goals" id="home_goals_${game.game_id}" min="0" max="9" value="${game.home_goals != null ? game.home_goals : ''}">
+												X
+												<input type="number" ${game.real_played ? 'disabled' : ''} name="away_goals" id="away_goals_${game.game_id}" min="0" max="9" value="${game.away_goals != null ? game.away_goals : ''}">
+												<img src="${away_team.logo}" alt="" height="7%" width="7%">
+												<p style="font-size: 12px;">${home_team.stadium} - ${game.local_time}</p>
+											</div>
+										</div>
+									</form>`;
+									gamesContainer.innerHTML += formHTML;
+								});
+
+								eventListener(gamesRound);
+							}
+
+							function eventListener(gamesRound) {
+								gamesRound.forEach((game) => {
+									var homeGoalsInput = document.getElementById(`home_goals_${game.game_id}`);
+									var awayGoalsInput = document.getElementById(`away_goals_${game.game_id}`);
+									
+									homeGoalsInput.addEventListener('input', function() {
+										checkInputs(game, homeGoalsInput, awayGoalsInput);
+									});
+									
+									awayGoalsInput.addEventListener('input', function() {
+										checkInputs(game, homeGoalsInput, awayGoalsInput);
+									});
+								});
+							}
+
+							function checkInputs(game, homeGoalsInput, awayGoalsInput) {
+								if (homeGoalsInput.value !== '' && awayGoalsInput.value !== '' && parseInt(homeGoalsInput.value) >= 0 && parseInt(awayGoalsInput.value) >= 0) {
+									var newGame = {
+										'game_id': game.game_id,
+										'home_team': game.home_team,
+										'home_goals': homeGoalsInput.value,
+										'away_team': game.away_team,
+										'away_goals': awayGoalsInput.value,
+										'simulated': game.simulated,
+										'real_played': game.real_played
+									};
+
+									let GameIdToFind = game.game_id;
+									console.log("gameIdToFind: ", GameIdToFind);
+									console.log('data antes:', data);
+
+									var foundIndex = data.findIndex(object => object['game_id'] == GameIdToFind);
+									if (foundIndex !== -1) {
+										resetTeamsVariables(data[foundIndex]);
+										data.splice(foundIndex, 1);
+										localStorage.setItem('results', JSON.stringify(data));
+									}
+
+									data.push(newGame);
+									console.log('data depois:', data);
+									var generaldata = JSON.parse(localStorage.getItem('teamsList'));
+									exec_game(newGame, generaldata);
+									localStorage.setItem('results', JSON.stringify(data));
+									print_table();
+								}
+							}
+
 									
 									function exec_game(game, teamsList) {
 										var home_team = game['home_team'];
