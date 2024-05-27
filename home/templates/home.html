@@ -216,28 +216,28 @@
 									var home_team = allTeams.find((team => team.name == game.home_team))
 									var away_team = allTeams.find((team => team.name == game.away_team))
 									var formHTML = `
-									<form id="form_${game.id}">
+									<form id="form_${game.game_id}">
 									<div style="border: 1px solid gainsboro">
 									<input type="hidden" name="home_team" value="${game.home_team}">
 									<input type="hidden" name="away_team" value="${game.away_team}">
-									<input type="hidden" name="game_id" value="${game.id}">
+									<input type="hidden" name="game_id" value="${game.game_id}">
 									<img src="${home_team.logo}" alt=""  height="7%" width="7%">
-									<input type="number" ${game.real_played ? 'disabled' : ''} name="home_goals" id="home_goals_${game.id}" min="0" max="9" value="${game.home_goals != null ? game.home_goals : ''}">	
+									<input type="number" ${game.real_played ? 'disabled' : ''} name="home_goals" id="home_goals_${game.game_id}" min="0" max="9" value="${game.home_goals != null ? game.home_goals : ''}" oninput="handleInput(event)">	
 									X
-									<input type="number"  ${game.real_played ? 'disabled' : ''} name="away_goals" id="away_goals_${game.id}" min="0" max="9" value="${game.away_goals != null ? game.away_goals : ''}">
+									<input type="number" ${game.real_played ? 'disabled' : ''} name="away_goals" id="away_goals_${game.game_id}" min="0" max="9" value="${game.away_goals != null ? game.away_goals : ''}" oninput="handleInput(event)>
 									<img src="${away_team.logo}" alt="" height="7%" width="7%">
 									<p style="font-size: 12px;">${home_team.stadium}  -  ${game.local_time}</p>
 									</div>
 									</form>`
 									document.getElementById("gamesContainer").innerHTML += formHTML
+
 								})}
-								document.addEventListener('input', function() {
-									var allGames = JSON.parse(localStorage.getItem('teamsList'))['games']
-									var gamesRound =  allGames.filter((games) => games['round'] == window.Round)
-									console.log("TODOS OS JOGOS DA RODADA", gamesRound)
-									gamesRound.forEach((game, index) => {
-										var homeGoalsInput = document.getElementById(`home_goals_${game.id}`);
-										var awayGoalsInput = document.getElementById(`away_goals_${game.id}`);
+								function handleInput(event){
+									var gameId = event.target.closest('form').id.split('_')[1];
+									console.log("event target = ", event.target)
+									console.log("game id = ", gameId)
+									var homeGoalsInput = document.getElementById(`home_goals_${gameId}`);
+									var awayGoalsInput = document.getElementById(`away_goals_${gameId}`);
 										
 										homeGoalsInput.addEventListener('input', function() {
 											checkInputs();
@@ -247,16 +247,19 @@
 											checkInputs();
 										});
 										function checkInputs() {
+											teamsList = JSON.parse(localStorage.getItem('teamsList'))
 											console.log("passou na check_inputs")
 											if (homeGoalsInput.value !== '' && awayGoalsInput.value !== '') {
-											var newGame = {
-												'game_id': `${game.game_id}`,
-												'home_team': `${game.home_team}`,
-												'home_goals': homeGoalsInput.value,
-												'away_team': `${game.away_team}`,
-												'away_goals': awayGoalsInput.value,
-												'simulated' : `${game.simulated}`,
-												'real_played': `${game.real_played}`
+												var game = teamsList['games'].find(game => game['game_id'] == gameId)
+												console.log("jogo filtrado", game)
+												var newGame = {
+													'game_id': `${game.game_id}`,
+													'home_team': `${game.home_team}`,
+													'home_goals': homeGoalsInput.value,
+													'away_team': `${game.away_team}`,
+													'away_goals': awayGoalsInput.value,
+													'simulated' : `${game.simulated}`,
+													'real_played': `${game.real_played}`
 											};
 											let GameIdToFind = game['game_id']
 											console.log("gameIdToFind: ", GameIdToFind)
@@ -282,7 +285,7 @@
 											print_table();
 										}
 										}
-										})});
+										};
 									
 									function exec_game(game, teamsList) {
 										var home_team = game['home_team'];
