@@ -146,17 +146,6 @@ def	create_league(league_id, season, l_url):
 			url = l_url
 		)
 
-def	update_teams():
-	teams_list = Team.objects.filter(id__range=(61, 79))
-	for item in teams_list:
-		item.league_id = 72
-		item.save()
-
-def	update_games():	
-	games_list = Game.objects.filter(id__range=(381, 760))
-	for item in games_list:
-		item.league_id = 72
-		item.save()
 
 def aproveitamento(team):
 	disputed = team.games_played * 3
