@@ -8,7 +8,7 @@ import requests, time
 from django.http import JsonResponse
 import json
 import json
-	
+
 # Create your views here.
 
 def	home(request):
@@ -68,6 +68,7 @@ def	get_data(request):
 		data['games'].append({
 			'league_id' : game.league_id,
 			'game_id': game.id,
+			'stadium': game.stadium,
 			'home_team': game.home_team.name,
 			'away_team': game.away_team.name,
 			'home_goals': game.home_goals,

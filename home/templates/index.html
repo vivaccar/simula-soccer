@@ -18,7 +18,7 @@
 		</div>
 	</nav>
 	<div style="margin: 20px;">
-		<h4>CAMPEONATOS</h4>
+		<h4 style="text-align: center;">CAMPEONATOS</h4>
 		{% for league in leagues_list %}
 		<a href="{% url league.url  %}"> <img src="{{ league.logo }}" alt="" width="5%" height="5%">{{ league.league_name }}</a>
 		<br>

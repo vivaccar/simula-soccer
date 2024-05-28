@@ -101,6 +101,7 @@ def	restart_games(game_list):
 
 
 def	get_updated_games(l_id, season):
+
 	url = "https://api-football-v1.p.rapidapi.com/v3/fixtures"
 	querystring = {"league":l_id, "season":season}
 	headers = {
@@ -109,6 +110,7 @@ def	get_updated_games(l_id, season):
 	}
 	response = requests.get(url, headers=headers, params=querystring)
 	data = response.json()
+	print ("Updating league: " + str(l_id))
 	game_list = Game.objects.filter(league_id = l_id)
 	restart_teams(Team.objects.filter(league_id = l_id))
 	restart_games(game_list)
@@ -118,17 +120,51 @@ def	get_updated_games(l_id, season):
 		time_utc = timezone.datetime.utcfromtimestamp(timestamp)
 		local_utc = time_utc.astimezone(timezone.get_current_timezone())
 		game.local_time = str(local_utc)[:16]
-		print(game.local_time)
 		game.league_id = game_data['league']['id']
 		game.home_goals = game_data['goals']['home']
 		game.away_goals = game_data['goals']['away']
+		game.stadium = game_data['fixture']['venue']['name']
 		if (game_data['fixture']['status']['long'] == 'Match Finished'):
 			update_table(game, game.home_team, game.away_team)
 			game.real_played = True
-			print(game_data['fixture']['status']['long'])
 		game.save()
 	convert_date(game_list)
 
+def	check_stadiums(games):
+	for game in games:
+		if game.stadium == 'Estádio Major Antônio Couto Pereira':
+			game.stadium = 'Couto Pereira'
+			game.save()
+		elif game.stadium == 'Estádio Governador Magalhães Pinto':
+			game.stadium = 'Mineirão'
+			game.save()
+		elif game.stadium == 'Estádio José Pinheiro Borda':
+			game.stadium = 'Beira-Rio'
+			game.save()
+		elif game.stadium == 'Estadio Jornalista Mário Filho':
+			game.stadium = 'Maracanã'
+			game.save()
+		elif game.stadium == 'Estádio Urbano Caldeira':
+			game.stadium = 'Vila Belmiro'
+			game.save()
+		elif game.stadium == 'Estádio Governador Plácido Aderaldo Castelo':
+			game.stadium = 'Castelão'
+			game.save()
+		elif game.stadium == 'Estádio Raimundo Sampaio':
+			game.stadium = 'Independência'
+			game.save()
+		
+
+def	request_data_from_api():
+	get_updated_games(71, 2024)
+	get_updated_games(72, 2024)
+	get_updated_games(39, 2023)
+	get_updated_games(140, 2023)
+	get_updated_games(78, 2023)
+	get_updated_games(135, 2023)
+	games = Game.objects.all()
+	check_stadiums(games)
+	
 def	create_league(league_id, season, l_url):
 		url = "https://api-football-v1.p.rapidapi.com/v3/leagues"
 		querystring = {"id": league_id, "season": season}
@@ -184,7 +220,6 @@ def convert_date(game_list):
 		day = game.local_time[8:10]
 		hour = game.local_time[11:16]
 		game.local_time = day + '/' + month + '/' + year + ' - '  + hour
-		print(game.local_time)
 		game.save()
 
 def create_and_update_league(l_id, season, games_per_round, l_url):

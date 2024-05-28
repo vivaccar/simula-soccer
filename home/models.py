@@ -33,7 +33,8 @@ class	Game(models.Model):
 	away_goals = models.IntegerField(default = None, null=True, blank=True)
 	simulated = models.BooleanField(default=False)
 	real_played= models.BooleanField(default=False)
-	round = models.IntegerField(default = 1)	
+	round = models.IntegerField(default = 1)
+	stadium = models.CharField(max_length=150, null=True, default=None)
 	timestamp = models.CharField(max_length=150, null=True, default=None)
 	local_time = models.CharField(max_length=150, default=None, null=True, blank=True)
 
