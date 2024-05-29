@@ -37,13 +37,73 @@
 		width: 8%;
 		text-align: center;
 	}
+	.menu {
+		position: relative;
+   		display: inline-block;
+	}
+	.menu-itens {
+		display: none;
+		position: absolute;
+		background-color: #f9f9f9;
+		min-width: 160px;
+		box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+		z-index: 1;
+	}
+	.menu-button {
+		background-color: #4CAF50;
+		color: white;
+		padding: 16px;
+		font-size: 16px;
+		border: none;
+		cursor: pointer;
+
+	}
+	.menu-itens a {
+    color: black;
+    padding: 6px 8px;
+    text-decoration: none;
+    display: block;
+}
+
+	.menu-itens a:hover {
+		background-color: #f1f1f1;
+	}
+
+	.menu:hover .menu-itens {
+		display: block;
+	}
+
+	.bar-ul {
+		list-style-type: none;
+		margin: 0;
+		padding: 0;
+		overflow: hidden;
+		display: inline;
+	}
 </style>
 <body>
 	<nav class="navbar navbar-inverse" style="background-color: rgb(155, 219, 111);">
 		<div class="container-fluid">
 			<div class="navbar-header">
 				{% load static %}
-				<a href="{% url 'home' %}" ><img src="{% static 'images/logo.png' %}" alt="logo" width="30%" height="30%"></a>
+				<ul class="bar-ul">
+					<li style="float: left;">
+						<a href="{% url 'home' %}" ><img src="{% static 'images/logo.png' %}" alt="logo" width="30%" height="30%"></a>
+					</li>
+					<li style="float: right;">
+						<div class="menu">
+							<button class="menu-button">Ver Ligas</button>
+							<div class="menu-itens">
+								<a href="{% url 'brasil_serie_a' %}">Brasileirao Serie A</a>
+								<a href="{% url 'brasil_serie_b' %}">Brasileirao Serie B</a>
+								<a href="{% url 'premier_league' %}">Premier League</a>
+								<a href="{% url 'serie_a' %}">Serie A</a>
+								<a href="{% url 'la_liga' %}">La Liga</a>
+								<a href="{% url 'bundesliga' %}">Bundesliga</a>
+							</div>
+						</div>
+					</li>
+				</ul>
 			</div>
 		</div>
 	</nav>
@@ -85,14 +145,14 @@
 			window.Round = getCurrentRound();
 			printGamesRound(window.Round)
 	})
-}	
+}
 	</script>
 		<br>
 		<div style="display: inline;">
-			<h2 class="league_title"><img style="width: 3%;" height="3%" src="{{ league.logo }}"></h2>
+			<h2 class="league_title"><img style="height: 5%; width: 5%;" src="{{ league.logo }}"></h2>
 		</div>
 		<div class="container-fluid">
-			<div class="row" style="width: 100%; height: 90%;">
+			<div class="row" style="width: 100%; height: 120%;">
 				<div class="col-lg-6 left-column">
 					<br>
 					<div class="table-responsive">
@@ -453,7 +513,7 @@
 							</script>
 						</form>
 					</div>
-						<div id="gamesContainer"></div>
+					<div id="gamesContainer"></div>
 			</div>
 		</div>
 		<br>
