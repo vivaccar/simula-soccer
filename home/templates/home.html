@@ -13,20 +13,16 @@
         overflow-x: auto;
     }
 
-     @media (max-width: 768px) {
-        .right-column {
-            margin-top: 20px;
-        }
-    }
     
      .left-column {
 		float: right;
     }
 
-    .right-column {
-		float: right;
-        margin-left: 5%;
-    } 
+    @media (min-width: 700px){
+		.right-column {
+			padding-left: 10%;
+		}
+	}
 	.league_title {
 		text-align: center;
 		font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
@@ -35,35 +31,49 @@
 	}
 	.table-cel {
 		width: 8%;
+		height: 10%;
 		text-align: center;
 	}
-	.menu {
-		position: relative;
-   		display: inline-block;
+	.navbar-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		width: 100%;
+}
+
+	.navbar-logo img {
+		width: 100px;
+		height: auto;
 	}
+
+	.menu {
+		float: right;
+	}
+
+	.menu-button {
+		background-color: #4CAF50;
+		color: white;
+		padding: 10px 20px;
+		border: none;
+		cursor: pointer;
+		font-size: 16px;
+	}
+
 	.menu-itens {
 		display: none;
 		position: absolute;
+		right: 0;
 		background-color: #f9f9f9;
 		min-width: 160px;
 		box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
 		z-index: 1;
 	}
-	.menu-button {
-		background-color: #4CAF50;
-		color: white;
-		padding: 16px;
-		font-size: 16px;
-		border: none;
-		cursor: pointer;
 
-	}
 	.menu-itens a {
-    color: black;
-    padding: 6px 8px;
-    text-decoration: none;
-    display: block;
-}
+		color: black;
+		padding: 12px 16px;
+		display: block;
+	}
 
 	.menu-itens a:hover {
 		background-color: #f1f1f1;
@@ -73,40 +83,30 @@
 		display: block;
 	}
 
-	.bar-ul {
-		list-style-type: none;
-		margin: 0;
-		padding: 0;
-		overflow: hidden;
-		display: inline;
-	}
+
 </style>
 <body>
 	<nav class="navbar navbar-inverse" style="background-color: rgb(155, 219, 111);">
 		<div class="container-fluid">
 			<div class="navbar-header">
 				{% load static %}
-				<ul class="bar-ul">
-					<li style="float: left;">
-						<a href="{% url 'home' %}" ><img src="{% static 'images/logo.png' %}" alt="logo" width="30%" height="30%"></a>
-					</li>
-					<li style="float: right;">
-						<div class="menu">
-							<button class="menu-button">Ver Ligas</button>
-							<div class="menu-itens">
-								<a href="{% url 'brasil_serie_a' %}">Brasileirao Serie A</a>
-								<a href="{% url 'brasil_serie_b' %}">Brasileirao Serie B</a>
-								<a href="{% url 'premier_league' %}">Premier League</a>
-								<a href="{% url 'serie_a' %}">Serie A</a>
-								<a href="{% url 'la_liga' %}">La Liga</a>
-								<a href="{% url 'bundesliga' %}">Bundesliga</a>
-							</div>
-						</div>
-					</li>
-				</ul>
+				<a href="{% url 'home' %}" class="navbar-logo">
+					<img src="{% static 'images/logo.png' %}" alt="logo">
+				</a>
+				<div class="menu">
+					<button class="menu-button">Ver Ligas</button>
+					<div class="menu-itens">
+						<a href="{% url 'brasil_serie_a' %}">Brasileirao Serie A</a>
+						<a href="{% url 'brasil_serie_b' %}">Brasileirao Serie B</a>
+						<a href="{% url 'premier_league' %}">Premier League</a>
+						<a href="{% url 'serie_a' %}">Serie A</a>
+						<a href="{% url 'la_liga' %}">La Liga</a>
+						<a href="{% url 'bundesliga' %}">Bundesliga</a>
+					</div>
+				</div>
 			</div>
 		</div>
-	</nav>
+	</nav>	
 	<script>
 		function getCurrentRound(){
 			let currentTime = Date.now() / 1000 //transormo de milissegundos para segundos(unidade de medida dos timestamps dos games)
@@ -247,11 +247,11 @@
 												<input type="hidden" name="home_team" value="${game.home_team}">
 												<input type="hidden" name="away_team" value="${game.away_team}">
 												<input type="hidden" name="game_id" value="${game.game_id}">
-												<img src="${home_team.logo}" alt="" height="7%" width="7%">
+												<img src="${home_team.logo}" alt="" height="8%" width="8%">
 												<input type="number" ${game.real_played ? 'disabled' : ''} name="home_goals" id="home_goals_${game.game_id}" min="0" max="9" value="${game.home_goals != null ? game.home_goals : ''}">
 												X
 												<input type="number" ${game.real_played ? 'disabled' : ''} name="away_goals" id="away_goals_${game.game_id}" min="0" max="9" value="${game.away_goals != null ? game.away_goals : ''}">
-												<img src="${away_team.logo}" alt="" height="7%" width="7%">
+												<img src="${away_team.logo}" alt="" height="9%" width="9%">
 												<p style="font-size: 12px;">${game.stadium} - ${game.local_time}</p>
 											</div>
 										</div>
@@ -488,31 +488,31 @@
 									})
 								})
 							</script>
-						</form>
-						<div id="round_container"></div>
-						<form class="d-inline">
-							{% csrf_token %}
-							<button id = "next_round" type ="button" class="btn btn-outline-success btn-sm">
-								Próxima <i class="fas fa-chevron-right"></i>
-							</button>
-							<script>
-								document.addEventListener('DOMContentLoaded', function(){
-									var nextRoundtButton = document.getElementById('next_round');
-									
-									nextRoundtButton.addEventListener('click', function(){
-										window.Round += 1
-										var numberOfTeams = JSON.parse(localStorage.getItem('generalData'))['teams'].length;
-										var lastRound = (numberOfTeams - 1) * 2
-										if (window.Round == lastRound)
-											document.getElementById('next_round').disabled = true;
-										else if (window.Round == 2)
-											document.getElementById('prev_round').disabled = false;
-										printGamesRound(window.Round)
+							</form>
+							<div id="round_container"></div>
+							<form class="d-inline">
+								{% csrf_token %}
+								<button id = "next_round" type ="button" class="btn btn-outline-success btn-sm">
+									Próxima <i class="fas fa-chevron-right"></i>
+								</button>
+								<script>
+									document.addEventListener('DOMContentLoaded', function(){
+										var nextRoundtButton = document.getElementById('next_round');
+										
+										nextRoundtButton.addEventListener('click', function(){
+											window.Round += 1
+											var numberOfTeams = JSON.parse(localStorage.getItem('generalData'))['teams'].length;
+											var lastRound = (numberOfTeams - 1) * 2
+											if (window.Round == lastRound)
+												document.getElementById('next_round').disabled = true;
+											else if (window.Round == 2)
+												document.getElementById('prev_round').disabled = false;
+											printGamesRound(window.Round)
+										})
 									})
-								})
-							</script>
-						</form>
-					</div>
+								</script>
+							</form>
+						</div>
 					<div id="gamesContainer"></div>
 			</div>
 		</div>
