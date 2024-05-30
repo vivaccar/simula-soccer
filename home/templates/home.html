@@ -377,6 +377,7 @@
 										else if (generalData['league_data']['name'] == 'La Liga' || generalData['league_data']['name'] == 'Serie A'){
 											generaldata['teams'].sort((a, b) => b.points - a.points);
 										}
+										localStorage.setItem('generalData', JSON.stringify(generaldata));
 									}
 									function exec_game(game, generaldata) {
 										let gameLocalStorage = generaldata['games'].find(object => object['game_id'] == game.game_id)
@@ -413,7 +414,8 @@
 										gameLocalStorage['away_goals'] = parseInt(game['away_goals'])
 										home_team_data.aproveitamento = ((home_team_data.points / (home_team_data.games_played * 3)) * 100).toFixed(1);
 										away_team_data.aproveitamento = ((away_team_data.points / (away_team_data.games_played * 3)) * 100).toFixed(1);
-										ft_sort_table(generaldata)
+										//ft_sort_table(generaldata)
+										generaldata['teams'].sort((a, b) => b.points - a.points);
 										localStorage.setItem('generalData', JSON.stringify(generaldata));
 										console.log("depois de exec game");
 										console.log(away_team_data);
