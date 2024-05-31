@@ -7,90 +7,13 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	{% load static %}
+	<link rel="stylesheet" href="{% static 'style.css' %}">
 </head>
-<style>
-    .table-responsive {
-        overflow-x: auto;
-    }
-
-    
-     .left-column {
-		float: right;
-    }
-
-    @media (min-width: 750px){
-		.right-column {
-			padding-left: 10%;
-		}
-	}
-	.league_title {
-		text-align: center;
-		font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-		color: rgb(155, 219, 111);
-		font-size: 30px;
-	}
-	.table-cel {
-		width: 8%;
-		height: 10%;
-		text-align: center;
-	}
-	.navbar-header {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		width: 100%;
-}
-
-	.navbar-logo img {
-		width: 100px;
-		height: auto;
-	}
-
-	.menu {
-		float: right;
-	}
-
-	.menu-button {
-		background-color: #4CAF50;
-		color: white;
-		padding: 10px 20px;
-		border: none;
-		cursor: pointer;
-		font-size: 16px;
-	}
-
-	.menu-itens {
-		display: none;
-		position: absolute;
-		right: 0;
-		background-color: #f9f9f9;
-		min-width: 160px;
-		box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-		z-index: 1;
-	}
-
-	.menu-itens a {
-		color: black;
-		padding: 12px 16px;
-		display: block;
-		border-bottom: 2px solid #4CAF50;
-	}
-
-	.menu-itens a:hover {
-		background-color: #f1f1f1;
-	}
-
-	.menu:hover .menu-itens {
-		display: block;
-	}
-
-
-</style>
 <body>
 	<nav class="navbar navbar-inverse" style="background-color: rgb(155, 219, 111);">
 		<div class="container-fluid">
 			<div class="navbar-header">
-				{% load static %}
 				<a href="{% url 'home' %}" class="navbar-logo">
 					<img src="{% static 'images/logo.png' %}" alt="logo">
 				</a>
@@ -414,7 +337,7 @@
 										gameLocalStorage['away_goals'] = parseInt(game['away_goals'])
 										home_team_data.aproveitamento = ((home_team_data.points / (home_team_data.games_played * 3)) * 100).toFixed(1);
 										away_team_data.aproveitamento = ((away_team_data.points / (away_team_data.games_played * 3)) * 100).toFixed(1);
-										//ft_sort_table(generaldata)
+										ft_sort_table(generaldata)
 										generaldata['teams'].sort((a, b) => b.points - a.points);
 										localStorage.setItem('generalData', JSON.stringify(generaldata));
 										console.log("depois de exec game");
