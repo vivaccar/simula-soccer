@@ -1,0 +1,155 @@
+.table-responsive {
+    overflow-x: auto;
+}
+
+
+ .left-column {
+    float: right;
+}
+
+@media (min-width: 750px){
+    .right-column {
+        padding-left: 10%;
+    }
+}
+.league_title {
+    text-align: center;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    color: rgb(155, 219, 111);
+    font-size: 30px;
+}
+.table-cel {
+    width: 8%;
+    height: 10%;
+    text-align: center;
+}
+.navbar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.navbar-logo img {
+    width: 100px;
+    height: auto;
+    justify-content: center;
+}
+
+.menu {
+    float: right;
+}
+
+.menu-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.menu-itens {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.menu-itens a {
+    color: black;
+    padding: 12px 16px;
+    display: block;
+    border-bottom: 2px solid #4CAF50;
+}
+
+.menu-itens a:hover {
+    background-color: #f1f1f1;
+}
+
+.menu:hover .menu-itens {
+    display: block;
+}
+
+.navbar-header {
+    width: 100%;
+    text-align: center;
+}
+
+.navbar-header img {
+    display: inline-block;
+    width: 7%;
+    height: auto;
+}
+
+@media (max-width: 700px) {
+    .navbar-header img {
+        width: 25%;
+    }
+}
+
+.container img {
+    width: 100px;
+    height: 100px;
+    margin: 10px;
+}
+
+.league-item img {
+    width: 100px; 
+    height: 100px;
+    margin-bottom: 7%;
+    border-radius: 1px solid green;
+    transition: transform 1.0s ease;
+}
+
+.league-item:hover {
+    transform: scale(1.1);
+}
+
+.league-item a {
+    border-radius: 1px solid green;
+}
+
+.league-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 170px;
+    height: 170px;
+    border-radius: 20px solid green;
+    margin: 40px;
+
+}
+.league-item span {
+    margin-top: 10px;
+    font-family: 'Arial', 'sans-serif';
+    font-size: 17px;
+    color: rgb(70,130,180)
+}
+.media a {
+    width: 80%;
+    height: 80%;
+}
+.media img {
+    width: 30px;
+    height: 30%;
+}
+.media a {
+    font-family: 'Arial', 'sans-serif';
+    color: rgb(155, 219, 111)
+}
+.container-leagues {
+    width: 100%;
+    text-align: center;
+    display: inline;
+}
+.title {
+    text-align: center;
+    font-family: 'Arial', 'sans-serif';
+    font-size: 60px;
+    color: rgb(70,130,180);
+}

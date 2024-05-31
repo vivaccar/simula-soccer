@@ -15,7 +15,7 @@ def	restart_teams(teams_list):
 		team.sg = 0
 		team.games_played = 0
 		team.save()
-		
+
 def	check_stadiums(games):
 	for game in games:
 		if game.stadium == 'Estádio Major Antônio Couto Pereira':
