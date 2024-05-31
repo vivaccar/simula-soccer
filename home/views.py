@@ -14,7 +14,7 @@ import json
 def	home(request):
 	leagues_list = League.objects.all()
 	context = {"leagues_list": leagues_list}
-	return render(request, 'index.html', context)
+	return render(request, 'home.html', context)
 
 def	get_data(request):
 	id_liga = int(request.POST.get('league_id'))
@@ -86,28 +86,28 @@ def	premier_league(request):
 	teams_list = Team.objects.filter(league_id = 39)
 	teams_list = teams_list.order_by('-points', '-sg', '-goals_pro')
 	context = {'league': league, 'teams_list': teams_list}
-	return render(request, 'home.html', context)
+	return render(request, 'league.html', context)
 
 def	la_liga(request):
 	league = League.objects.get(league_id = 140)
 	teams_list = Team.objects.filter(league_id = 140)
 	teams_list = teams_list.order_by('-points', '-sg', '-goals_pro')
 	context = {'league': league, 'teams_list': teams_list}
-	return render(request, 'home.html', context)
+	return render(request, 'league.html', context)
 
 def	serie_a(request):
 	league = League.objects.get(league_id = 135)
 	teams_list = Team.objects.filter(league_id = 135)
 	teams_list = teams_list.order_by('-points', '-sg', '-goals_pro')
 	context = {'league': league, 'teams_list': teams_list}
-	return render(request, 'home.html', context)
+	return render(request, 'league.html', context)
 
 def	bundesliga(request):
 	league = League.objects.get(league_id = 78)
 	teams_list = Team.objects.filter(league_id = 78)
 	teams_list = teams_list.order_by('-points', '-sg', '-goals_pro')
 	context = {'league': league, 'teams_list': teams_list}
-	return render(request, 'home.html', context)
+	return render(request, 'league.html', context)
 
 def brasil_serie_a(request):
 	league = League.objects.get(league_id = 71)
@@ -115,11 +115,11 @@ def brasil_serie_a(request):
 	teams_list = teams_list.order_by('-points', '-wins', '-sg', 'goals_pro')
 	leagues_list = League.objects.all()
 	context = {'ĺeagues_list': leagues_list, 'league': league, 'teams_list': teams_list}
-	return render(request, 'home.html', context)
+	return render(request, 'league.html', context)
 
 def brasil_serie_b(request):
 	league = League.objects.get(league_id = 72)
 	teams_list = Team.objects.filter(league_id = 72)
 	teams_list = teams_list.order_by('-points', '-wins', '-sg', 'goals_pro')
 	context = {'league': league, 'teams_list': teams_list}
-	return render(request, 'home.html', context)
+	return render(request, 'league.html', context)

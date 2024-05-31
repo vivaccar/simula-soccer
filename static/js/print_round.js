@@ -150,7 +150,14 @@ function ft_sort_table(generalData) {
 		});
 	}
 	else if (generalData['league_data']['name'] == 'La Liga' || generalData['league_data']['name'] == 'Serie A') {
-		generaldata['teams'].sort((a, b) => b.points - a.points);
+		console.log("entrou")
+		generalData['teams'].sort((a, b) => { 
+			if (b.points != a.points) {
+				return b.points - a.points;
+			} else {
+				return (desempate(a, b, generalData['games']))
+			}
+		})	
 	}
 }
 function exec_game(game, generaldata) {
@@ -194,6 +201,19 @@ function exec_game(game, generaldata) {
 	console.log(away_team_data);
 	console.log(home_team_data);
 	console.log(gameLocalStorage);
+}
+
+function desempate(team_a, team_b, gamesList) {
+	game_1 = gamesList.filter(game => game.home_team == team_a.name && game.away_team == team_b.name)
+	game_2 = gamesList.filter(game => game.home_team == team_b.name && game.away_team == team_a.name)
+	console.log ("game 1:", game_1)
+	console.log ("game 1 home goals:", game_1)
+	console.log ("game 2:", game_2)
+	team_a_goals = parseInt(game_1.home_goals) + parseInt(game_2.away_goals)
+	team_b_goals = parseInt(game_2.home_goals) + parseInt(game_1.away_goals)
+	console.log("team a gols:", team_a_goals)
+	console.log("team b gols:", team_b_goals)
+
 }
 
 function print_table(generaldata) {
