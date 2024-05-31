@@ -31,9 +31,17 @@
 }
 
 .navbar-logo img {
-    width: 100px;
+    width: 40%;
     height: auto;
     justify-content: center;
+	margin-right: auto;
+	margin-left: auto;
+}
+
+
+.navbar-link .logo {
+	width: 40%; 
+	height: auto;
 }
 
 .menu {
@@ -41,7 +49,7 @@
 }
 
 .menu-button {
-    background-color: #4CAF50;
+    background-color: rgb(12, 64, 99);
     color: white;
     padding: 10px 20px;
     border: none;
@@ -83,6 +91,8 @@
     display: inline-block;
     width: 7%;
     height: auto;
+	margin-right: auto;
+	margin-left: auto;
 }
 
 @media (max-width: 700px) {
@@ -128,7 +138,7 @@
     margin-top: 10px;
     font-family: 'Arial', 'sans-serif';
     font-size: 17px;
-    color: rgb(70,130,180)
+    color: rgb(12, 64, 99)
 }
 .media a {
     width: 80%;
@@ -140,7 +150,7 @@
 }
 .media a {
     font-family: 'Arial', 'sans-serif';
-    color: rgb(155, 219, 111)
+    color: rgb(12, 64, 99)
 }
 .container-leagues {
     width: 100%;
@@ -150,6 +160,6 @@
 .title {
     text-align: center;
     font-family: 'Arial', 'sans-serif';
-    font-size: 60px;
-    color: rgb(70,130,180);
+    font-size: 40px;
+    color: rgb(12, 64, 99);
 }

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SimulaSoccer</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	<script src="{% static 'js/jquery-3.7.1.min.js' %}" type="application/javascript"></script>
+	{% load static %}
+	<link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+	<nav class="navbar navbar-inverse" style="background-color: rgb(155, 219, 111); border-bottom: 5px solid rgb(12, 64, 99)">
+		<div class="container-fluid">
+			<div class="navbar-header" class="navbar-link">
+				<a href="{% url 'home' %}">
+					<img class="logo" src="{% static 'images/logo.png' %}" alt="logo">
+				</a>
+				<div class="menu">
+					<button class="menu-button"><strong>OUTRAS LIGAS</strong></button>
+					<div class="menu-itens">
+						<a href="{% url 'brasil_serie_a' %}">Brasileirão Série A</a>
+						<a href="{% url 'brasil_serie_b' %}">Brasileirão Série B</a>
+						<a href="{% url 'premier_league' %}">Premier League</a>
+						<a href="{% url 'serie_a' %}">Serie A</a>
+						<a href="{% url 'la_liga' %}">La Liga</a>
+						<a href="{% url 'bundesliga' %}">Bundesliga</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</nav>	
+	<script>
+		var league_id = '{{league.league_id}}'
+	</script>
+	<script src="{% static 'js/get_data.js' %}"></script>
+		<br>
+		<div style="display: inline;">
+			<h2 class="league_title"><img style="height: 5%; width: 5%;" src="{{ league.logo }}"></h2>
+		</div>
+		<div class="container-fluid">
+			<div class="row" style="width: 100%; height: 120%;">
+				<div class="col-lg-6 left-column">
+					<br>
+					<div class="table-responsive">
+						<table class="table-striped">
+							<thead style="background-color: gainsboro;">
+								<th></th>
+								<th></th>
+								<th class="table-cel">P</th>
+								<th class="table-cel">J</th>
+								<th class="table-cel">V</th>
+								<th class="table-cel">E</th>
+								<th class="table-cel">D</th>
+								<th class="table-cel">G</th>
+								<th class="table-cel">GS</th>
+								<th class="table-cel">SG</th>
+								<th class="table-cel">%</th>
+							</thead>
+							<tbody>
+								{% for team in teams_list %}
+								<tr id="team_row_{{ team.id_name }}">
+									<td class="text-center mb-4" {% if forloop.counter <= league.zone_1 %}style="background-color: green; color:white" 
+									{% elif league.zone_2 and forloop.counter <= league.zone_2 %}style="background-color: blue; color: white" 
+									{% elif league.zone_3 and forloop.counter <= league.zone_3 %}style="background-color: rgb(199, 186, 0); color: white" 
+									{% elif forloop.counter >=  league.zone_reb %}style="background-color: red; color: white"
+									{% endif %}>{{ forloop.counter }}</td>
+									<td><img src="{{ team.logo }}" alt="" width="13%" height="13%"> {{ team.name }}</td>
+									<td class="text-center mb-4">{{ team.points }}</td>
+									<td class="text-center mb-4">{{ team.games_played }}</td>
+									<td class="text-center mb-4">{{ team.wins }}</td>
+									<td class="text-center mb-4">{{ team.draws }}</td>
+									<td class="text-center mb-4">{{ team.loss }}</td>
+									<td class="text-center mb-4">{{ team.goals_pro }}</td>
+									<td class="text-center mb-4">{{ team.goals_con }}</td>
+									<td class="text-center mb-4">{{ team.sg }}</td>
+									<td class="text-center mb-4">{{ team.aproveitamento }}%</td>
+								</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+						<br>
+						<div class="table-responsive">
+							<table>
+								<tr>
+									<td style="background-color: green; font-size: 10px; width : 4%"> </td>
+									<td> {{ league.zone_1_txt }}</td>
+								</tr>
+								<tr>	
+									{% if league.zone_2 %}
+									<td style="background-color: blue; font-size: 10px; width : 4%"> </td>
+									<td> {{ league.zone_2_txt }}</td>
+									{% endif %}
+								</tr>
+								<tr>
+									{% if league.zone_3 %}
+									<td style="background-color: rgb(199, 186, 0); font-size: 10px; width : 4%"> </td>
+									<td> {{ league.zone_3_txt }}</td>
+									{% endif %}
+								</tr>
+								<tr>
+									<td style="background-color: red; font-size: 10px; width : 4%"> </td>
+									<td> {{ league.zone_reb_txt }}</td>
+								</tr>
+							</table>	
+						</div>
+					</div>
+				</div>
+				<div class="right-column">
+					<div class="d-flex justify-content-between align-items-center mt-4">
+						<script src="{% static 'js/print_round.js' %}"></script>
+							<form class="d-inline">	
+							{% csrf_token %}
+							<button id ="prev_round" type="button" class="btn btn-outline-success btn-sm" >
+								<i class="fas fa-chevron-left"></i> Anterior
+							</button>
+							<script src="{% static 'js/prev_round.js' %}"></script>
+						</form>
+						<div id="round_container"></div>
+						<form class="d-inline">
+							{% csrf_token %}
+							<button id = "next_round" type ="button" class="btn btn-outline-success btn-sm">
+								Próxima <i class="fas fa-chevron-right"></i>
+							</button>
+							<script src="{% static 'js/next_round.js' %}"></script>
+						</form>
+					</div>
+					<div id="gamesContainer"></div>
+			</div>
+		</div>
+		<br>
+</body>
+<div align="center">
+	<form method="post">
+		{% csrf_token %}
+		<button type="submit" id ="restart" class="btn btn-outline-success btn-sm">
+			Restart <i class="fas fa-chevron-right"></i>
+		</button>
+		<script src="{% static 'js/restart.js' %}"></script>
+	</form>
+</div>
+<meta name="csrf-token" content="{{ csrf_token }}">
+<br>
+</html>
+
