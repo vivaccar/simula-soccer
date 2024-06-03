@@ -110,7 +110,9 @@ function resetTeamsVariables(game, generaldata) {
 }
 
 function ft_sort_table(generalData) {
-	if (generalData['league_data']['name'] == 'Premier League') {
+	console.log("sort")
+	console.log("general", generalData['league_data'])
+	if (generalData['league_data']['id'] == 39) {
 		generalData['teams'].sort((a, b) => {
 			if (a.points != b.points) {
 				return b.points - a.points;
@@ -123,15 +125,20 @@ function ft_sort_table(generalData) {
 			}
 		});
 	}
-	else if (generalData['league_data']['name'] == 'Brasileiro Serie A' || generalData['league_data']['name'] == 'Brasileiro Serie B') {
+	else if (generalData['league_data']['league_id'] == 71 || generalData['league_data']['league_id'] == 72) {
 		generalData['teams'].sort((a, b) => {
+			console.log("br")
 			if (a.points != b.points) {
 				return b.points - a.points;
 			} else {
 				if (a.wins != b.wins) {
 					return b.wins - a.wins;
 				} else {
-					return b.sg - a.sg;
+					if (a.sg != b.sg)
+						return b.sg - a.sg;
+					else{
+						return b.goals_pro
+					}
 				}
 			}
 		});
@@ -167,8 +174,6 @@ function exec_game(game, generaldata) {
 	var home_team_data = generaldata['teams'].find(team => team.name === home_team);
 	var away_team_data = generaldata['teams'].find(team => team.name === away_team);
 	gameLocalStorage['simulated'] = true
-	console.log(home_team_data);
-	console.log(away_team_data);
 	home_team_data.goals_pro += parseInt(game['home_goals']);
 	home_team_data.goals_con += parseInt(game['away_goals']);
 	home_team_data.sg += parseInt(game['home_goals']) - parseInt(game['away_goals']);
@@ -198,22 +203,21 @@ function exec_game(game, generaldata) {
 	ft_sort_table(generaldata)
 	localStorage.setItem('generalData', JSON.stringify(generaldata));
 	console.log("depois de exec game");
-	console.log(away_team_data);
-	console.log(home_team_data);
-	console.log(gameLocalStorage);
 }
 
 function desempate(team_a, team_b, gamesList) {
-	game_1 = gamesList.filter(game => game.home_team == team_a.name && game.away_team == team_b.name)
-	game_2 = gamesList.filter(game => game.home_team == team_b.name && game.away_team == team_a.name)
+	console.log ("ENTROU NO DESEMPATE")
+	var game_1 = gamesList.find(game => game.home_team == team_a.name && game.away_team == team_b.name)
+	var game_2 = gamesList.find(game => game.home_team == team_b.name && game.away_team == team_a.name)
 	console.log ("game 1:", game_1)
-	console.log ("game 1 home goals:", game_1)
 	console.log ("game 2:", game_2)
-	team_a_goals = parseInt(game_1.home_goals) + parseInt(game_2.away_goals)
-	team_b_goals = parseInt(game_2.home_goals) + parseInt(game_1.away_goals)
+	var team_a_goals = parseInt(game_1['home_goals'] != null ? game_1['home_goals'] : 0) + parseInt(game_2['away_goals'] != null ? game_2['away_goals'] : 0)
+	var team_b_goals = parseInt(game_1['away_goals'] != null ? game_1['away_goals'] : 0) + parseInt(game_2['home_goals'] != null ? game_2['home_goals'] : 0)
 	console.log("team a gols:", team_a_goals)
 	console.log("team b gols:", team_b_goals)
-
+	if (team_a_goals == team_b_goals)
+		return (team_b.sg - team_a.sg)
+	return (team_b_goals - team_a_goals)
 }
 
 function print_table(generaldata) {

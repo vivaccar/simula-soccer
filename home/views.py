@@ -4,6 +4,7 @@ from django.template import loader
 from .models import Team, Game, League
 from .forms import Game_forms
 from .scripts import create_games, create_teams, get_updated_games, aproveitamento, create_league
+from itertools import combinations
 import requests, time
 from django.http import JsonResponse
 import json
@@ -92,7 +93,8 @@ def	la_liga(request):
 	league = League.objects.get(league_id = 140)
 	teams_list = Team.objects.filter(league_id = 140)
 	teams_list = teams_list.order_by('-points', '-sg', '-goals_pro')
-	context = {'league': league, 'teams_list': teams_list}
+	new_teams_list = desempate(teams_list)
+	context = {'league': league, 'teams_list': new_teams_list}
 	return render(request, 'league.html', context)
 
 def	serie_a(request):
@@ -105,7 +107,7 @@ def	serie_a(request):
 def	bundesliga(request):
 	league = League.objects.get(league_id = 78)
 	teams_list = Team.objects.filter(league_id = 78)
-	teams_list = teams_list.order_by('-points', '-sg', '-goals_pro')
+	teams_list = teams_list.order_by('-points', '-sg', '-goals_pro'	)
 	context = {'league': league, 'teams_list': teams_list}
 	return render(request, 'league.html', context)
 
@@ -123,3 +125,31 @@ def brasil_serie_b(request):
 	teams_list = teams_list.order_by('-points', '-wins', '-sg', 'goals_pro')
 	context = {'league': league, 'teams_list': teams_list}
 	return render(request, 'league.html', context)
+
+def find_index(array, item):
+	for index, element in enumerate(array):
+		if element == item:
+			return index
+
+def desempate(teams_list):
+	team_pairs = combinations(teams_list, 2)
+
+	for team1, team2 in team_pairs:
+		index_1 = find_index(teams_list, team1)
+		index_2 = find_index(teams_list, team2)
+		if team1.points == team2.points:
+			game_1 = Game.objects.get(home_team_id = team1.id, away_team_id = team2.id)
+			game_2 = Game.objects.get(home_team_id = team2.id, away_team_id = team1.id)
+			team1_goals = game_1.home_goals + game_2.away_goals
+			team2_goals = game_1.away_goals + game_2.home_goals
+			if team2_goals > team1_goals:
+				item1 = teams_list.get(id = team1.id)
+				print (item1)
+				item2 = teams_list.get(id = team2.id)
+				print (item2)
+				teams_list.insert(index_1, item2)
+				teams_list.insert(index_2, team1)
+				print (teams_list)
+				item1.save()
+				item2.save()
+	return(teams_list)
