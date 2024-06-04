@@ -11,5 +11,6 @@ urlpatterns = [
 	path('la_liga', views.la_liga, name='la_liga'),
 	path('bundesliga', views.bundesliga, name='bundesliga'),
 	path('serie_a', views.serie_a, name='serie_a'),
+	path('primeira_liga', views.primeira_liga, name='primeira_liga'),
 	path('get_data', views.get_data, name='get_data'),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -121,6 +121,12 @@ def brasil_serie_b(request):
 	context = {'league': league, 'teams_list': teams_list}
 	return render(request, 'league.html', context)
 
+def primeira_liga(request):
+	league = League.objects.get(league_id = 94)
+	teams_list = update_positions(94)
+	context = {'league': league, 'teams_list': teams_list}
+	return render(request, 'league.html', context)
+
 def find_index(array, item):
 	for index, element in enumerate(array):
 		if element == item:
