@@ -3,6 +3,19 @@ from math import modf
 from django.utils import timezone
 import requests
 
+def update_positions(l_id):
+	if (l_id == 71 or l_id == 72):
+		teams_list = Team.objects.filter(league_id = l_id).order_by('-points', '-wins', '-sg', 'goals_pro')
+	else:
+		teams_list = Team.objects.filter(league_id = l_id).order_by('-points', '-sg', '-goals_pro')
+	i = 1
+	for team in teams_list:
+		team.position = i
+		i = i + 1
+		print(f'time: {team}, posicao: {team.position}')
+		team.save()
+	return(teams_list)
+
 def	create_teams(l_id, season):
 	url = "https://api-football-v1.p.rapidapi.com/v3/teams"
 

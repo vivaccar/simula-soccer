@@ -59,7 +59,6 @@ function checkInputs(game, homeGoalsInput, awayGoalsInput) {
 		game['away_goals'] = awayGoalsInput.value
 		let GameIdToFind = game.game_id;
 		console.log("gameIdToFind: ", GameIdToFind);
-
 		var generaldata = JSON.parse(localStorage.getItem('generalData'));
 		var gamesList = generaldata['games']
 		var foundGame = gamesList.find(object => object['game_id'] == GameIdToFind);
@@ -136,7 +135,7 @@ function ft_sort_table(generalData) {
 				} else {
 					if (a.sg != b.sg)
 						return b.sg - a.sg;
-					else{
+					else {
 						return b.goals_pro
 					}
 				}
@@ -158,13 +157,13 @@ function ft_sort_table(generalData) {
 	}
 	else if (generalData['league_data']['name'] == 'La Liga' || generalData['league_data']['name'] == 'Serie A') {
 		console.log("entrou")
-		generalData['teams'].sort((a, b) => { 
+		generalData['teams'].sort((a, b) => {
 			if (b.points != a.points) {
 				return b.points - a.points;
 			} else {
 				return (desempate(a, b, generalData['games']))
 			}
-		})	
+		})
 	}
 }
 function exec_game(game, generaldata) {
@@ -206,11 +205,11 @@ function exec_game(game, generaldata) {
 }
 
 function desempate(team_a, team_b, gamesList) {
-	console.log ("ENTROU NO DESEMPATE")
+	console.log("ENTROU NO DESEMPATE")
 	var game_1 = gamesList.find(game => game.home_team == team_a.name && game.away_team == team_b.name)
 	var game_2 = gamesList.find(game => game.home_team == team_b.name && game.away_team == team_a.name)
-	console.log ("game 1:", game_1)
-	console.log ("game 2:", game_2)
+	console.log("game 1:", game_1)
+	console.log("game 2:", game_2)
 	var team_a_goals = parseInt(game_1['home_goals'] != null ? game_1['home_goals'] : 0) + parseInt(game_2['away_goals'] != null ? game_2['away_goals'] : 0)
 	var team_b_goals = parseInt(game_1['away_goals'] != null ? game_1['away_goals'] : 0) + parseInt(game_2['home_goals'] != null ? game_2['home_goals'] : 0)
 	console.log("team a gols:", team_a_goals)
@@ -221,6 +220,7 @@ function desempate(team_a, team_b, gamesList) {
 }
 
 function print_table(generaldata) {
+	console.log("entrou na print tableeeeeee")
 	const tbody = document.querySelector('tbody')
 	tbody.innerHTML = ''
 	generaldata['teams'].forEach((team, index) => {
@@ -243,9 +243,9 @@ function print_table(generaldata) {
 			textColor = 'white'
 		}
 		row.innerHTML = `	
-			<td class="text-center mb-4" style="background-color: ${backgroundColor}; color: ${textColor};">${index + 1}</td>
+			<td class="text-center mb-4" style="background-color: ${backgroundColor}; color: ${textColor};"><strong>${index + 1}</strong></td>
 			<td><img src="${team.logo}" alt="" width="13%" height="13%"> ${team.name}</td>
-			<td class="text-center mb-4">${team.points}</td>
+			<td class="text-center mb-4"><strong>${team.points}</strong></td>
 			<td class="text-center mb-4">${team.games_played}</td>
 			<td class="text-center mb-4">${team.wins}</td>
 			<td class="text-center mb-4">${team.draws}</td>

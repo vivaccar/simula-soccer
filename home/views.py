@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.template import loader
 from .models import Team, Game, League
 from .forms import Game_forms
-from .scripts import create_games, create_teams, get_updated_games, aproveitamento, create_league
+from .scripts import create_games, create_teams, get_updated_games, aproveitamento, create_league, update_positions
 from itertools import combinations
 import requests, time
 from django.http import JsonResponse
@@ -84,45 +84,40 @@ def	get_data(request):
 
 def	premier_league(request):
 	league = League.objects.get(league_id = 39)
-	teams_list = Team.objects.filter(league_id = 39)
-	teams_list = teams_list.order_by('-points', '-sg', '-goals_pro')
+	teams_list = update_positions(39)
 	context = {'league': league, 'teams_list': teams_list}
 	return render(request, 'league.html', context)
 
 def	la_liga(request):
 	league = League.objects.get(league_id = 140)
-	teams_list = Team.objects.filter(league_id = 140)
-	teams_list = teams_list.order_by('-points', '-sg', '-goals_pro')
+	teams_list = update_positions(140)
 	new_teams_list = desempate(teams_list)
 	context = {'league': league, 'teams_list': new_teams_list}
 	return render(request, 'league.html', context)
 
 def	serie_a(request):
 	league = League.objects.get(league_id = 135)
-	teams_list = Team.objects.filter(league_id = 135)
-	teams_list = teams_list.order_by('-points', '-sg', '-goals_pro')
-	context = {'league': league, 'teams_list': teams_list}
+	teams_list = update_positions(135)
+	new_teams_list = desempate(teams_list)
+	context = {'league': league, 'teams_list': new_teams_list}
 	return render(request, 'league.html', context)
 
 def	bundesliga(request):
 	league = League.objects.get(league_id = 78)
-	teams_list = Team.objects.filter(league_id = 78)
-	teams_list = teams_list.order_by('-points', '-sg', '-goals_pro'	)
+	teams_list = update_positions(78)
 	context = {'league': league, 'teams_list': teams_list}
 	return render(request, 'league.html', context)
 
 def brasil_serie_a(request):
 	league = League.objects.get(league_id = 71)
-	teams_list = Team.objects.filter(league_id = 71)
-	teams_list = teams_list.order_by('-points', '-wins', '-sg', 'goals_pro')
+	teams_list = update_positions(71)
 	leagues_list = League.objects.all()
 	context = {'ĺeagues_list': leagues_list, 'league': league, 'teams_list': teams_list}
 	return render(request, 'league.html', context)
 
 def brasil_serie_b(request):
 	league = League.objects.get(league_id = 72)
-	teams_list = Team.objects.filter(league_id = 72)
-	teams_list = teams_list.order_by('-points', '-wins', '-sg', 'goals_pro')
+	teams_list = update_positions(72)
 	context = {'league': league, 'teams_list': teams_list}
 	return render(request, 'league.html', context)
 
@@ -133,10 +128,9 @@ def find_index(array, item):
 
 def desempate(teams_list):
 	team_pairs = combinations(teams_list, 2)
+	print("ENTROU NO DESEMPATE")
 
 	for team1, team2 in team_pairs:
-		index_1 = find_index(teams_list, team1)
-		index_2 = find_index(teams_list, team2)
 		if team1.points == team2.points:
 			game_1 = Game.objects.get(home_team_id = team1.id, away_team_id = team2.id)
 			game_2 = Game.objects.get(home_team_id = team2.id, away_team_id = team1.id)
@@ -144,12 +138,15 @@ def desempate(teams_list):
 			team2_goals = game_1.away_goals + game_2.home_goals
 			if team2_goals > team1_goals:
 				item1 = teams_list.get(id = team1.id)
-				print (item1)
 				item2 = teams_list.get(id = team2.id)
-				print (item2)
-				teams_list.insert(index_1, item2)
-				teams_list.insert(index_2, team1)
-				print (teams_list)
+				print (item1, item1.position, team1_goals)
+				print (item2, item2.position, team2_goals)
+				temp = item1.position
+				item1.position = item2.position
+				item2.position = temp
+				print (item1, item1.position)
+				print (item2, item2.position)
 				item1.save()
 				item2.save()
+			teams_list = teams_list.order_by('position')
 	return(teams_list)

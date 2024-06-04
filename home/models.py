@@ -18,6 +18,7 @@ class	Team(models.Model):
 	sg = models.IntegerField(default=0)
 	aproveitamento = models.FloatField(default=0)
 	games_played = models.IntegerField(default=0)
+	position = models.IntegerField(default = 0)
 
 	def __str__(self):
 		return self.name

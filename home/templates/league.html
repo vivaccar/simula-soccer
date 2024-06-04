@@ -67,9 +67,9 @@
 									{% elif league.zone_2 and forloop.counter <= league.zone_2 %}style="background-color: blue; color: white" 
 									{% elif league.zone_3 and forloop.counter <= league.zone_3 %}style="background-color: rgb(199, 186, 0); color: white" 
 									{% elif forloop.counter >=  league.zone_reb %}style="background-color: red; color: white"
-									{% endif %}>{{ forloop.counter }}</td>
+									{% endif %}><strong>{{ forloop.counter }}</strong></td>
 									<td><img src="{{ team.logo }}" alt="" width="13%" height="13%"> {{ team.name }}</td>
-									<td class="text-center mb-4">{{ team.points }}</td>
+									<td class="text-center mb-4"><strong>{{ team.points }}</strong></td>
 									<td class="text-center mb-4">{{ team.games_played }}</td>
 									<td class="text-center mb-4">{{ team.wins }}</td>
 									<td class="text-center mb-4">{{ team.draws }}</td>
