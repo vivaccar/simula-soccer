@@ -66,7 +66,9 @@
 								<tr id="team_row_{{ team.id_name }}">
 									<td class="text-center mb-4" {% if forloop.counter <= league.zone_1 %}style="background-color: green; color:white" 
 									{% elif league.zone_2 and forloop.counter <= league.zone_2 %}style="background-color: blue; color: white" 
-									{% elif league.zone_3 and forloop.counter <= league.zone_3 %}style="background-color: rgb(199, 186, 0); color: white" 
+									{% elif league.zone_3 and forloop.counter <= league.zone_3 %}style="background-color: rgb(199, 186, 0); color: white"
+									{% elif league.zone_4 and forloop.counter <= league.zone_4 %}style="background-color: purple; color: white" 
+									{% elif league.zone_5 and forloop.counter == league.zone_5 %}style="background-color: orangered; color: white" 
 									{% elif forloop.counter >=  league.zone_reb %}style="background-color: red; color: white"
 									{% endif %}><strong>{{ forloop.counter }}</strong></td>
 									<td><img src="{{ team.logo }}" alt="" width="13%" height="13%"> {{ team.name }}</td>
@@ -103,6 +105,18 @@
 									{% endif %}
 								</tr>
 								<tr>
+									{% if league.zone_4 %}
+									<td style="background-color: purple; font-size: 10px; width : 4%"> </td>
+									<td> {{ league.zone_4_txt }}</td>
+									{% endif %}
+								</tr>
+								<tr>
+									{% if league.zone_5 %}
+									<td style="background-color: orangered; font-size: 10px; width : 4%"> </td>
+									<td> {{ league.zone_5_txt }}</td>
+									{% endif %}
+								</tr>
+								<tr>
 									<td style="background-color: red; font-size: 10px; width : 4%"> </td>
 									<td> {{ league.zone_reb_txt }}</td>
 								</tr>
@@ -110,7 +124,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="right-column">
+				<div class="right-column" style="width: 40%; height: 10%">
 					<div class="d-flex justify-content-between align-items-center mt-4">
 						<script src="{% static 'js/print_round.js' %}"></script>
 							<form class="d-inline">	

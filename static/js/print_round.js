@@ -18,15 +18,15 @@ function printGamesRound(round) {
 		var formHTML = `
 	<form id="form_${game.game_id}">
 	<div style="align-items: center; text-align: center; border:1px solid gainsboro;">
-		<div>
+		<div style="height: 10%">
 			<br>
 			<input type="hidden" name="home_team" value="${game.home_team}">
 			<input type="hidden" name="away_team" value="${game.away_team}">
 			<input type="hidden" name="game_id" value="${game.game_id}">
 			<img src="${home_team.logo}" alt="" height="7%" width="7%">
-			<input type="number" ${game.real_played ? 'disabled' : ''} name="home_goals" id="home_goals_${game.game_id}" min="0" max="9" value="${game.home_goals != null ? game.home_goals : ''}">
+			<input style="width: 15%" type="number" ${game.real_played ? 'disabled' : ''} name="home_goals" id="home_goals_${game.game_id}" min="0" max="9" value="${game.home_goals != null ? game.home_goals : ''}">
 			X
-			<input type="number" ${game.real_played ? 'disabled' : ''} name="away_goals" id="away_goals_${game.game_id}" min="0" max="9" value="${game.away_goals != null ? game.away_goals : ''}">
+			<input style="width: 15%" type="number" ${game.real_played ? 'disabled' : ''} name="away_goals" id="away_goals_${game.game_id}" min="0" max="9" value="${game.away_goals != null ? game.away_goals : ''}">
 			<img src="${away_team.logo}" alt="" height="7%" width="7%">
 			<p style="font-size: 12px;">${game.stadium} - ${game.local_time}</p>
 		</div>

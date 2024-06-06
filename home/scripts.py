@@ -212,17 +212,22 @@ def	game_time():
 		game.save()
 
 def update_zones():
-	serie = League.objects.get(league_id = 135)
+	serie = League.objects.get(league_id = 78)
 	
-	serie.zone_1 = 4
-	serie.zone_1_txt = 'Classificados à fase de grupos da UEFA Champions League'
-	serie.zone_2 = 5
-	serie.zone_2_txt = 'Classificado à UEFA Europa League'
-	serie.zone_3 = 6
-	serie.zone_3_txt = 'Classificado à fase preliminar da UEFA Europa Conference League'
-	serie.zone_reb = 18
-	serie.zone_reb_txt = 'Rebaixados à Serie B'
-
+	""" serie.zone_1 = 1
+	serie.zone_1_txt = 'Classificado à fase de grupos da UEFA Champions League'
+	serie.zone_2 = 2
+	serie.zone_2_txt = 'Classificado à preliminar da UEFA Champions League'
+	serie.zone_3 = 3
+	serie.zone_3_txt = 'Classificado à fase preliminar da UEFA Europa League'
+	serie.zone_4 = 4
+	serie.zone_4_txt = 'Classificado à fase preliminar da UEFA Europa Conference League'
+	 """
+	serie.zone_5 = 16
+	serie.zone_5_txt = 'Playoff contra o rebaixamento'
+	""" serie.zone_reb = 17
+	serie.zone_reb_txt = 'Rebaixados à Segunda Liga'
+ """
 	serie.save()
 	
 
