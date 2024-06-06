@@ -5,7 +5,7 @@ import requests
 
 def update_positions(l_id):
 	if (l_id == 71 or l_id == 72):
-		teams_list = Team.objects.filter(league_id = l_id).order_by('-points', '-wins', '-sg', 'goals_pro')
+		teams_list = Team.objects.filter(league_id = l_id).order_by('-points', '-wins', '-sg', '-goals_pro')
 	else:
 		teams_list = Team.objects.filter(league_id = l_id).order_by('-points', '-sg', '-goals_pro')
 	i = 1

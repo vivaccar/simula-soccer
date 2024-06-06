@@ -136,7 +136,7 @@ function ft_sort_table(generalData) {
 					if (a.sg != b.sg)
 						return b.sg - a.sg;
 					else {
-						return b.goals_pro
+						return b.goals_pro - a.goals_pro
 					}
 				}
 			}
