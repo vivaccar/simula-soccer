@@ -40,7 +40,7 @@
 	<script src="{% static 'js/get_data.js' %}"></script>
 		<br>
 		<div style="display: inline;">
-			<h2 class="league_title"><img style="height: 5%; width: 5%;" src="{{ league.logo }}"></h2>
+			<h2 class="league_title"><img style="height: 7%; width: 7%;" src="{{ league.logo }}"></h2>
 		</div>
 		<div class="container-fluid">
 			<div class="row" style="width: 100%; height: 120%;">
@@ -71,7 +71,7 @@
 									{% elif league.zone_5 and forloop.counter == league.zone_5 %}style="background-color: orangered; color: white" 
 									{% elif forloop.counter >=  league.zone_reb %}style="background-color: red; color: white"
 									{% endif %}><strong>{{ forloop.counter }}</strong></td>
-									<td><img src="{{ team.logo }}" alt="" width="13%" height="13%"> {{ team.name }}</td>
+									<td><img src="{{ team.logo }}" alt="" width="15%" height="15%"> {{ team.name }}</td>
 									<td class="text-center mb-4"><strong>{{ team.points }}</strong></td>
 									<td class="text-center mb-4">{{ team.games_played }}</td>
 									<td class="text-center mb-4">{{ team.wins }}</td>
@@ -124,7 +124,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="right-column" style="width: 40%; height: 10%">
+				<div class="right-column">
 					<div class="d-flex justify-content-between align-items-center mt-4">
 						<script src="{% static 'js/print_round.js' %}"></script>
 							<form class="d-inline">	

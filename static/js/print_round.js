@@ -18,16 +18,16 @@ function printGamesRound(round) {
 		var formHTML = `
 	<form id="form_${game.game_id}">
 	<div style="align-items: center; text-align: center; border:1px solid gainsboro;">
-		<div style="height: 10%">
+		<div>
 			<br>
 			<input type="hidden" name="home_team" value="${game.home_team}">
 			<input type="hidden" name="away_team" value="${game.away_team}">
 			<input type="hidden" name="game_id" value="${game.game_id}">
-			<img src="${home_team.logo}" alt="" height="7%" width="7%">
-			<input class="" type="number" ${game.real_played ? 'disabled' : ''} name="home_goals" id="home_goals_${game.game_id}" min="0" max="9" value="${game.home_goals != null ? game.home_goals : ''}">
+			<img src="${home_team.logo}" alt="" height="8%" width="8%">
+			<input type="number" ${game.real_played ? 'disabled' : ''} name="home_goals" id="home_goals_${game.game_id}" min="0" max="9" value="${game.home_goals != null ? game.home_goals : ''}">
 			X
-			<input style="width: 15%" type="number" ${game.real_played ? 'disabled' : ''} name="away_goals" id="away_goals_${game.game_id}" min="0" max="9" value="${game.away_goals != null ? game.away_goals : ''}">
-			<img src="${away_team.logo}" alt="" height="7%" width="7%">
+			<input type="number" ${game.real_played ? 'disabled' : ''} name="away_goals" id="away_goals_${game.game_id}" min="0" max="9" value="${game.away_goals != null ? game.away_goals : ''}">
+			<img src="${away_team.logo}" alt="" height="8%" width="8%">
 			<p style="font-size: 12px;">${game.stadium} - ${game.local_time}</p>
 		</div>
 	</div>
@@ -53,8 +53,14 @@ function eventListener(gamesRound) {
 	});
 }
 
+function isNumeric(input) {
+	const regex = /^\d+$/;
+
+    return regex.test(input);
+}
+
 function checkInputs(game, homeGoalsInput, awayGoalsInput) {
-	if (homeGoalsInput.value !== '' && awayGoalsInput.value !== '' && homeGoalsInput.value >= 0 && awayGoalsInput.value >= 0) {
+	if (homeGoalsInput.value !== '' && awayGoalsInput.value !== '' && homeGoalsInput.value >= 0 && awayGoalsInput.value >= 0 && isNumeric(homeGoalsInput.value) && isNumeric(awayGoalsInput.value)) {
 		game['home_goals'] = homeGoalsInput.value
 		game['away_goals'] = awayGoalsInput.value
 		let GameIdToFind = game.game_id;
@@ -244,7 +250,7 @@ function print_table(generaldata) {
 		}
 		row.innerHTML = `	
 			<td class="text-center mb-4" style="background-color: ${backgroundColor}; color: ${textColor};"><strong>${index + 1}</strong></td>
-			<td><img src="${team.logo}" alt="" width="13%" height="13%"> ${team.name}</td>
+			<td><img src="${team.logo}" alt="" width="15%" height="15%"> ${team.name}</td>
 			<td class="text-center mb-4"><strong>${team.points}</strong></td>
 			<td class="text-center mb-4">${team.games_played}</td>
 			<td class="text-center mb-4">${team.wins}</td>
