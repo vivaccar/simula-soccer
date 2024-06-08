@@ -67,7 +67,7 @@
 									<td class="text-center mb-4" {% if forloop.counter <= league.zone_1 %}style="background-color: green; color:white" 
 									{% elif league.zone_2 and forloop.counter <= league.zone_2 %}style="background-color: blue; color: white" 
 									{% elif league.zone_3 and forloop.counter <= league.zone_3 %}style="background-color: rgb(199, 186, 0); color: white"
-									{% elif league.zone_4 and forloop.counter <= league.zone_4 %}style="background-color: purple; color: white" 
+									{% elif league.zone_4 and forloop.counter <= league.zone_4 %}style="background-color: purple; color: white"
 									{% elif league.zone_5 and forloop.counter == league.zone_5 %}style="background-color: orangered; color: white" 
 									{% elif forloop.counter >=  league.zone_reb %}style="background-color: red; color: white"
 									{% endif %}><strong>{{ forloop.counter }}</strong></td>
