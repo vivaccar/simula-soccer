@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-vxa=(y5@^l2na5ra_don2sm(2xb(m(-qwtwh7ajfz#+lvc)!=i
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['simulasoccer.pythonanywhere.com']
+ALLOWED_HOSTS = []
 
 
 # Application definition

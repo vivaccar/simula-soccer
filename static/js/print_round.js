@@ -1,5 +1,20 @@
 var data = [];
 
+function validateInput(event){
+	const key = event.key
+	const isNumber = /^\d$/.test(key)
+	const input = event.target
+	const value = input.value
+	console.log("a tecla eh: ", key)
+
+	if (!isNumber && key != 'Backspace' && key != 'ArrowRight' && key != 'ArrowLeft' && key != 'Delete' && key != 'Tab'){
+		event.preventDefault()
+		return;
+	}
+	if (isNumber && value.length >= 2)
+		event.preventDefault()
+}
+
 function printGamesRound(round) {
 	printRound()
 	console.log("entrou na print round");
@@ -24,9 +39,9 @@ function printGamesRound(round) {
 			<input type="hidden" name="away_team" value="${game.away_team}">
 			<input type="hidden" name="game_id" value="${game.game_id}">
 			<img src="${home_team.logo}" alt="" height="8%" width="8%">
-			<input type="number" ${game.real_played ? 'disabled' : ''} name="home_goals" id="home_goals_${game.game_id}" min="0" max="9" value="${game.home_goals != null ? game.home_goals : ''}">
+			<input onkeydown="validateInput(event)" type="number" ${game.real_played ? 'disabled' : ''} name="home_goals" id="home_goals_${game.game_id}" min="0" max="99" value="${game.home_goals != null ? game.home_goals : ''}">
 			X
-			<input type="number" ${game.real_played ? 'disabled' : ''} name="away_goals" id="away_goals_${game.game_id}" min="0" max="9" value="${game.away_goals != null ? game.away_goals : ''}">
+			<input onkeydown="validateInput(event)" type="number" ${game.real_played ? 'disabled' : ''} name="away_goals" id="away_goals_${game.game_id}" min="0" max="99" value="${game.away_goals != null ? game.away_goals : ''}">
 			<img src="${away_team.logo}" alt="" height="8%" width="8%">
 			<p style="font-size: 12px;">${game.stadium} - ${game.local_time}</p>
 		</div>
@@ -53,14 +68,8 @@ function eventListener(gamesRound) {
 	});
 }
 
-function isNumeric(input) {
-	const regex = /^\d+$/;
-
-    return regex.test(input);
-}
-
 function checkInputs(game, homeGoalsInput, awayGoalsInput) {
-	if (homeGoalsInput.value !== '' && awayGoalsInput.value !== '' && homeGoalsInput.value >= 0 && awayGoalsInput.value >= 0 && isNumeric(homeGoalsInput.value) && isNumeric(awayGoalsInput.value)) {
+	if (homeGoalsInput.value !== '' && awayGoalsInput.value !== '' && homeGoalsInput.value >= 0 && awayGoalsInput.value >= 0) {
 		game['home_goals'] = homeGoalsInput.value
 		game['away_goals'] = awayGoalsInput.value
 		let GameIdToFind = game.game_id;
@@ -264,4 +273,3 @@ function print_table(generaldata) {
 		tbody.appendChild(row);
 	})
 }
-
