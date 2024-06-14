@@ -19,7 +19,6 @@ function getCSRFToken() {
 	return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 }
 function getGeneralData() {
-	console.log(l_id)
 	fetch('get_data', {
 		method: 'POST',
 		headers: {

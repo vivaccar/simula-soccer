@@ -5,7 +5,6 @@ function validateInput(event){
 	const isNumber = /^\d$/.test(key)
 	const input = event.target
 	const value = input.value
-	console.log("a tecla eh: ", key)
 
 	if (!isNumber && key != 'Backspace' && key != 'ArrowRight' && key != 'ArrowLeft' && key != 'Delete' && key != 'Tab'){
 		event.preventDefault()
@@ -38,11 +37,11 @@ function printGamesRound(round) {
 			<input type="hidden" name="home_team" value="${game.home_team}">
 			<input type="hidden" name="away_team" value="${game.away_team}">
 			<input type="hidden" name="game_id" value="${game.game_id}">
-			<img src="${home_team.logo}" alt="" height="8%" width="8%">
+			<img src="${home_team.logo}" alt="" width="8%">
 			<input onkeydown="validateInput(event)" type="number" ${game.real_played ? 'disabled' : ''} name="home_goals" id="home_goals_${game.game_id}" min="0" max="99" value="${game.home_goals != null ? game.home_goals : ''}">
 			X
 			<input onkeydown="validateInput(event)" type="number" ${game.real_played ? 'disabled' : ''} name="away_goals" id="away_goals_${game.game_id}" min="0" max="99" value="${game.away_goals != null ? game.away_goals : ''}">
-			<img src="${away_team.logo}" alt="" height="8%" width="8%">
+			<img src="${away_team.logo}" alt="" width="8%">
 			<p style="font-size: 12px;">${game.stadium} - ${game.local_time}</p>
 		</div>
 	</div>
@@ -73,12 +72,9 @@ function checkInputs(game, homeGoalsInput, awayGoalsInput) {
 		game['home_goals'] = homeGoalsInput.value
 		game['away_goals'] = awayGoalsInput.value
 		let GameIdToFind = game.game_id;
-		console.log("gameIdToFind: ", GameIdToFind);
 		var generaldata = JSON.parse(localStorage.getItem('generalData'));
 		var gamesList = generaldata['games']
 		var foundGame = gamesList.find(object => object['game_id'] == GameIdToFind);
-		console.log("jogo encontrado: ", foundGame)
-		console.log("simulated jogo encontrado: ", foundGame['simulated'])
 		if (foundGame['simulated']) {
 			resetTeamsVariables(foundGame, generaldata);
 		}
@@ -88,9 +84,7 @@ function checkInputs(game, homeGoalsInput, awayGoalsInput) {
 }
 
 function resetTeamsVariables(game, generaldata) {
-	console.log("entrou na resetTeams")
 	let gameLocalStorage = generaldata['games'].find(object => object['game_id'] == game.game_id)
-	console.log("game do ls", gameLocalStorage)
 	let home_team = generaldata['teams'].find(team => team.name == game['home_team'])
 	let away_team = generaldata['teams'].find(team => team.name == game['away_team'])
 	home_team.games_played -= 1
@@ -124,8 +118,6 @@ function resetTeamsVariables(game, generaldata) {
 }
 
 function ft_sort_table(generalData) {
-	console.log("sort")
-	console.log("general", generalData['league_data'])
 	if (generalData['league_data']['id'] == 39) {
 		generalData['teams'].sort((a, b) => {
 			if (a.points != b.points) {
@@ -141,7 +133,6 @@ function ft_sort_table(generalData) {
 	}
 	else if (generalData['league_data']['league_id'] == 71 || generalData['league_data']['league_id'] == 72) {
 		generalData['teams'].sort((a, b) => {
-			console.log("br")
 			if (a.points != b.points) {
 				return b.points - a.points;
 			} else {
@@ -171,7 +162,6 @@ function ft_sort_table(generalData) {
 		});
 	}
 	else if (generalData['league_data']['name'] == 'La Liga' || generalData['league_data']['name'] == 'Serie A') {
-		console.log("entrou")
 		generalData['teams'].sort((a, b) => {
 			if (b.points != a.points) {
 				return b.points - a.points;
@@ -216,26 +206,19 @@ function exec_game(game, generaldata) {
 	away_team_data.aproveitamento = ((away_team_data.points / (away_team_data.games_played * 3)) * 100).toFixed(1);
 	ft_sort_table(generaldata)
 	localStorage.setItem('generalData', JSON.stringify(generaldata));
-	console.log("depois de exec game");
 }
 
 function desempate(team_a, team_b, gamesList) {
-	console.log("ENTROU NO DESEMPATE")
 	var game_1 = gamesList.find(game => game.home_team == team_a.name && game.away_team == team_b.name)
 	var game_2 = gamesList.find(game => game.home_team == team_b.name && game.away_team == team_a.name)
-	console.log("game 1:", game_1)
-	console.log("game 2:", game_2)
 	var team_a_goals = parseInt(game_1['home_goals'] != null ? game_1['home_goals'] : 0) + parseInt(game_2['away_goals'] != null ? game_2['away_goals'] : 0)
 	var team_b_goals = parseInt(game_1['away_goals'] != null ? game_1['away_goals'] : 0) + parseInt(game_2['home_goals'] != null ? game_2['home_goals'] : 0)
-	console.log("team a gols:", team_a_goals)
-	console.log("team b gols:", team_b_goals)
 	if (team_a_goals == team_b_goals)
 		return (team_b.sg - team_a.sg)
 	return (team_b_goals - team_a_goals)
 }
 
 function print_table(generaldata) {
-	console.log("entrou na print tableeeeeee")
 	const tbody = document.querySelector('tbody')
 	tbody.innerHTML = ''
 	generaldata['teams'].forEach((team, index) => {
@@ -258,17 +241,17 @@ function print_table(generaldata) {
 			textColor = 'white'
 		}
 		row.innerHTML = `	
-			<td class="text-center mb-4" style="background-color: ${backgroundColor}; color: ${textColor};"><strong>${index + 1}</strong></td>
-			<td><img src="${team.logo}" alt="" width="15%" height="15%"> ${team.name}</td>
-			<td class="text-center mb-4"><strong>${team.points}</strong></td>
-			<td class="text-center mb-4">${team.games_played}</td>
-			<td class="text-center mb-4">${team.wins}</td>
-			<td class="text-center mb-4">${team.draws}</td>
-			<td class="text-center mb-4">${team.loss}</td>
-			<td class="text-center mb-4">${team.goals_pro}</td>
-			<td class="text-center mb-4">${team.goals_con}</td>
-			<td class="text-center mb-4">${team.sg}</td>
-			<td class="text-center mb-4">${team.aproveitamento}%</td>
+			<td class="text-center" style="background-color: ${backgroundColor}; color: ${textColor};"><strong>${index + 1}</strong></td>
+			<td><img src="${team.logo}" alt="" width="15%" height="auto"> ${team.name}</td>
+			<td class="text-center"><strong>${team.points}</strong></td>
+			<td class="text-center">${team.games_played}</td>
+			<td class="text-center">${team.wins}</td>
+			<td class="text-center">${team.draws}</td>
+			<td class="text-center">${team.loss}</td>
+			<td class="text-center">${team.goals_pro}</td>
+			<td class="text-center">${team.goals_con}</td>
+			<td class="text-center">${team.sg}</td>
+			<td class="text-center">${team.aproveitamento}%</td>
 			`;
 		tbody.appendChild(row);
 	})
