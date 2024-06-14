@@ -30,19 +30,18 @@ function printGamesRound(round) {
 		var home_team = allTeams.find((team => team.name == game.home_team));
 		var away_team = allTeams.find((team => team.name == game.away_team));
 		var formHTML = `
-	<form id="form_${game.game_id}">
-	<div style="align-items: center; text-align: center; border:1px solid gainsboro;">
-		<div>
-			<br>
+	<form style="justify-content: center; align-items: center; text-align:center;" id="form_${game.game_id}">
+	<div style="align-items: center; text-align: center; border: 1px solid gainsboro">
+		<div class="mt-1 mb-1">
 			<input type="hidden" name="home_team" value="${game.home_team}">
 			<input type="hidden" name="away_team" value="${game.away_team}">
 			<input type="hidden" name="game_id" value="${game.game_id}">
-			<img src="${home_team.logo}" alt="" width="8%">
+			<img src="${home_team.logo}" alt="" width="6%">
 			<input onkeydown="validateInput(event)" type="number" ${game.real_played ? 'disabled' : ''} name="home_goals" id="home_goals_${game.game_id}" min="0" max="99" value="${game.home_goals != null ? game.home_goals : ''}">
 			X
 			<input onkeydown="validateInput(event)" type="number" ${game.real_played ? 'disabled' : ''} name="away_goals" id="away_goals_${game.game_id}" min="0" max="99" value="${game.away_goals != null ? game.away_goals : ''}">
-			<img src="${away_team.logo}" alt="" width="8%">
-			<p style="font-size: 12px;">${game.stadium} - ${game.local_time}</p>
+			<img src="${away_team.logo}" alt="" width="6%">
+			<p style="font-size: 12px; margin-bottom: 0">${game.stadium} - ${game.local_time}</p>			
 		</div>
 	</div>
 	</form>`;
