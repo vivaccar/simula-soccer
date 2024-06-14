@@ -43,8 +43,8 @@
 			<h2 class="league_title"><img style="height: 7%; width: 7%;" src="{{ league.logo }}"></h2>
 		</div>
 		<div class="container-fluid">
-			<div class="row" style="width: 100%; height: 120%;">
-				<div class="col-lg-6 left-column">
+			<div class="row" style="height: 120%;">
+				<div class="col-lg-6 col-12 left-column">
 					<br>
 					<div class="table-responsive">
 						<table class="table-striped">
@@ -64,23 +64,23 @@
 							<tbody>
 								{% for team in teams_list %}
 								<tr id="team_row_{{ team.id_name }}">
-									<td class="text-center mb-4" {% if forloop.counter <= league.zone_1 %}style="background-color: green; color:white" 
+									<td class="text-center" {% if forloop.counter <= league.zone_1 %}style="background-color: green; color:white" 
 									{% elif league.zone_2 and forloop.counter <= league.zone_2 %}style="background-color: blue; color: white" 
 									{% elif league.zone_3 and forloop.counter <= league.zone_3 %}style="background-color: rgb(199, 186, 0); color: white"
 									{% elif league.zone_4 and forloop.counter <= league.zone_4 %}style="background-color: purple; color: white"
 									{% elif league.zone_5 and forloop.counter == league.zone_5 %}style="background-color: orangered; color: white" 
 									{% elif forloop.counter >=  league.zone_reb %}style="background-color: red; color: white"
 									{% endif %}><strong>{{ forloop.counter }}</strong></td>
-									<td><img src="{{ team.logo }}" alt="" width="15%" height="15%"> {{ team.name }}</td>
-									<td class="text-center mb-4"><strong>{{ team.points }}</strong></td>
-									<td class="text-center mb-4">{{ team.games_played }}</td>
-									<td class="text-center mb-4">{{ team.wins }}</td>
-									<td class="text-center mb-4">{{ team.draws }}</td>
-									<td class="text-center mb-4">{{ team.loss }}</td>
-									<td class="text-center mb-4">{{ team.goals_pro }}</td>
-									<td class="text-center mb-4">{{ team.goals_con }}</td>
-									<td class="text-center mb-4">{{ team.sg }}</td>
-									<td class="text-center mb-4">{{ team.aproveitamento }}%</td>
+									<td><img src="{{ team.logo }}" alt="" style="width: 15%;" height="auto"> {{ team.name }}</td>
+									<td class="text-center"><strong>{{ team.points }}</strong></td>
+									<td class="text-center">{{ team.games_played }}</td>
+									<td class="text-center">{{ team.wins }}</td>
+									<td class="text-center">{{ team.draws }}</td>
+									<td class="text-center">{{ team.loss }}</td>
+									<td class="text-center">{{ team.goals_pro }}</td>
+									<td class="text-center">{{ team.goals_con }}</td>
+									<td class="text-center">{{ team.sg }}</td>
+									<td class="text-center">{{ team.aproveitamento }}%</td>
 								</tr>
 								{% endfor %}
 							</tbody>
@@ -124,10 +124,10 @@
 						</div>
 					</div>
 				</div>
-				<div class="right-column" style="margin-left: 10%">
+				<div class="col-lg-6 col-12 right-column">
 					<div class="d-flex justify-content-between align-items-center mt-4">
 						<script src="{% static 'js/print_round.js' %}"></script>
-							<form class="d-inline">	
+							<form class="d-inline">
 							{% csrf_token %}
 							<button id ="prev_round" type="button" class="btn btn-outline-success btn-sm" >
 								<i class="fas fa-chevron-left"></i> Anterior
