@@ -245,3 +245,27 @@ def create_and_update_league(l_id, season, games_per_round, l_url):
 	create_teams(l_id, season)
 	create_games(l_id, season, games_per_round)
 	get_updated_games(l_id, season)
+
+def update_logos():
+	vasco = Team.objects.get(name = 'Vasco da Gama')
+	vasco.logo = 'static/images/vasco_da_gama.png'
+	atletico = Team.objects.get(name = 'Atlético-MG')
+	atletico.logo = 'static/images/cam.png'
+	vitoria = Team.objects.get(name = 'Vitória')
+	vitoria.logo = 'static/images/vitoria_fc.png'
+	bfc = Team.objects.get(name = 'Botafogo SP')
+	bfc.logo = 'static/images/botafogo_sp.png'
+	leipzig = Team.objects.get(name = 'RB Leipzig')
+	leipzig.logo = 'static/images/rb_leipzig.png'
+	vizela = Team.objects.get(name = 'Vizela')
+	vizela.logo = 'static/images/vizela.png'
+	juve = Team.objects.get(name = 'Juventus')
+	juve.logo = 'static/images/juventus.png'
+
+	vasco.save()
+	atletico.save()
+	vitoria.save()
+	bfc.save()
+	leipzig.save()
+	vizela.save()
+	juve.save()
